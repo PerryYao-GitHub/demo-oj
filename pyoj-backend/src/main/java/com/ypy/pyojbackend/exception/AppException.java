@@ -1,0 +1,20 @@
+package com.ypy.pyojbackend.exception;
+
+import com.ypy.pyojbackend.common.AppCode;
+import lombok.Getter;
+
+@Getter
+public class AppException extends Exception {
+
+    private final int code;
+
+    public AppException(int code, String message) {
+        super(message);
+        this.code = code;
+    }
+
+    public AppException(AppCode appCode) {
+        super(appCode.getMessage());
+        this.code = appCode.getCode();
+    }
+}
