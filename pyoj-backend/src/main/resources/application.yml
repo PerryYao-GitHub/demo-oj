@@ -29,5 +29,10 @@ spring:
 mybatis-plus:
   type-handlers-package: com.baomidou.mybatisplus.extension.handlers
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 
 

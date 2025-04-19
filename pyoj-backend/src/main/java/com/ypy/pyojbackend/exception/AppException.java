@@ -17,4 +17,9 @@ public class AppException extends Exception {
         super(appCode.getMessage());
         this.code = appCode.getCode();
     }
+
+    public AppException(AppCode appCode, String message) {
+        super(message);
+        this.code = appCode.getCode();
+    }
 }

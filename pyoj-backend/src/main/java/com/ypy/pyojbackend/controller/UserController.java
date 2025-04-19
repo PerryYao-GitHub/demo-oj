@@ -16,11 +16,11 @@ public class UserController {
 
     @PostMapping("/register")
     public AppResponse<?> register(@RequestBody UserAuthRequest userAuthRequest) throws AppException {
-        return userService.register(UserAuthRequest.toUser(userAuthRequest));
+        return userService.register(userService.toUser(userAuthRequest));
     }
 
     @PostMapping("/login")
     public AppResponse<?> login(@RequestBody UserAuthRequest userAuthRequest) throws AppException {
-        return userService.login(UserAuthRequest.toUser(userAuthRequest));
+        return userService.login(userService.toUser(userAuthRequest));
     }
 }

@@ -3,15 +3,17 @@ package com.ypy.pyojbackend.model.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.ypy.pyojbackend.codesandbox.ExecuteInfo;
-import com.ypy.pyojbackend.model.enums.LangEnum;
-import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
+import com.ypy.pyojbackend.common.LangEnum;
+import com.ypy.pyojbackend.common.SubmitStatusEnum;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @TableName(value = "r_submit", autoResultMap = true)
-public class Submit {
+public class Submit implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -22,7 +24,7 @@ public class Submit {
 
     private SubmitStatusEnum submitStatus;
 
-    private LangEnum lang;
+    private Byte lang;
 
     private String code;
 

@@ -1,16 +1,16 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.model.enums.LangEnum;
-import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * submit simple info
  */
 @Data
-public class SubmitSimpleVO {
+public class SubmitSimpleVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -18,9 +18,9 @@ public class SubmitSimpleVO {
 
     private Long questionId;
 
-    private SubmitStatusEnum submitStatus;
+    private String submitStatus;
 
-    private LangEnum lang;
+    private String lang;
 
     private Date createTime;
 }

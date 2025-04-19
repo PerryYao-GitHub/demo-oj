@@ -8,7 +8,8 @@ import com.ypy.pyojbackend.common.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.mapper.UserMapper;
 import com.ypy.pyojbackend.model.entity.User;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
+import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.model.request.UserAuthRequest;
 import com.ypy.pyojbackend.model.vo.UserVO;
 import com.ypy.pyojbackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,20 +29,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private static final String VALID_REGEX = "^[a-zA-Z0-9!@#$%^&*\\-_+]{4,16}$";
 
-    private static final String LOCK_PREFIX = "pyoj:userservice:register:lock:";
+    private static final String LOCK_PREFIX = "pyoj:user-service:register:lock:";
 
-    @Autowired
+    @Resource
     private RedissonClient redissonClient; // for redis distributed lock
 
-    public static boolean validUsernamePassword(String username, String password) {
-        if (username == null || password == null) return false;
-        return username.matches(VALID_REGEX) && password.matches(VALID_REGEX);
+    @Override
+    public User toUser(UserAuthRequest userAuthRequest) throws AppException {
+        if (!userAuthRequest.getUsername().matches(VALID_REGEX) || !userAuthRequest.getPassword().matches(VALID_REGEX)) throw new AppException(AppCode.ERR_INVALID_USR_PWD);
+        User user = new User();
+        user.setUsername(userAuthRequest.getUsername());
+        user.setPassword(userAuthRequest.getPassword());
+        return user;
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) throws AppException {
+        User fakeUser = new User();
+        fakeUser.setUsername("admin-ypy");
+        fakeUser.setPassword("admin-ypy");
+        fakeUser.setRole(UserRoleEnum.ADMIN);
+        return fakeUser;
     }
 
     @Override
     public AppResponse<?> register(User user) throws AppException {
-        if (!validUsernamePassword(user.getUsername(), user.getPassword())) throw new AppException(AppCode.ERR_INVALID_USR_PWD);
-
         String lockKey = LOCK_PREFIX + user.getUsername();
         RLock lk = redissonClient.getLock(lockKey);
         boolean acquired = false;
@@ -71,13 +85,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public AppResponse<UserVO> login(User user) throws AppException {
-        if (!validUsernamePassword(user.getUsername(), user.getPassword())) throw new AppException(AppCode.ERR_INVALID_USR_PWD);
         QueryWrapper<User> qw = new QueryWrapper<>();
         String encryptedPassword = DigestUtil.md5Hex(SALT + user.getPassword());
         qw.eq("username", user.getUsername());
         qw.eq("password", encryptedPassword);
         User selectedUser = baseMapper.selectOne(qw);
         if (selectedUser == null) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
+        // todo: distributed-session or jwt
         return new AppResponse<>(AppCode.OK, UserVO.fromUser(selectedUser));
     }
 }

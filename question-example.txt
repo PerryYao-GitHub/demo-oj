@@ -1,0 +1,65 @@
+{
+  "title": "两数之和",
+  "description": "给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的两个整数，并返回它们的数组下标。",
+  "tags": ["array", "hash"],
+  "judgeCase": {
+    "inputs": [
+      "2 7 11 15\n9",
+      "3 2 4\n6",
+      "3 3\n6"
+    ],
+    "outputs": [
+      "0 1",
+      "1 2",
+      "0 1"
+    ]
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 256
+  }
+}
+
+{
+  "title": "有效的括号",
+  "description": "给定一个只包括 '(', ')', '{', '}', '[', ']' 的字符串，判断字符串是否有效。",
+  "tags": ["stack", "string"],
+  "judgeCase": {
+    "inputs": [
+      "()",
+      "()[]{}",
+      "(]"
+    ],
+    "outputs": [
+      "true",
+      "true",
+      "false"
+    ]
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 128
+  }
+}
+
+{
+  "title": "爬楼梯",
+  "description": "假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。计算到达楼顶有多少种不同的方法。",
+  "tags": ["dynamic programming"],
+  "judgeCase": {
+    "inputs": [
+      "2",
+      "3",
+      "10"
+    ],
+    "outputs": [
+      "2",
+      "3",
+      "89"
+    ]
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 128
+  }
+}

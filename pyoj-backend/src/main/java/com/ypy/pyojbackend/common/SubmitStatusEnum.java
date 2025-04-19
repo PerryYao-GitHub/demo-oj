@@ -1,8 +1,11 @@
-package com.ypy.pyojbackend.model.enums;
+package com.ypy.pyojbackend.common;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @AllArgsConstructor
@@ -16,10 +19,16 @@ public enum SubmitStatusEnum {
 
     private final String text;
 
-    public static SubmitStatusEnum fromValue(byte value) {
+    public static final Map<Byte, String> valueTextMap;
+
+    public static final Map<String, Byte> textValueMap;
+
+    static {
+        valueTextMap = new HashMap<>();
+        textValueMap = new HashMap<>();
         for (SubmitStatusEnum e : values()) {
-            if (e.value == value) return e;
+            valueTextMap.put(e.getValue(), e.getText());
+            textValueMap.put(e.getText(), e.getValue());
         }
-        throw new IllegalArgumentException("Invalid status value: " + value);
     }
 }

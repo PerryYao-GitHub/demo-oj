@@ -1,17 +1,20 @@
 package com.ypy.pyojbackend.model.vo;
 
 import com.ypy.pyojbackend.model.entity.User;
-import com.ypy.pyojbackend.model.enums.TagEnum;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
+import com.ypy.pyojbackend.common.TagEnum;
+import com.ypy.pyojbackend.common.UserRoleEnum;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * user detail info
  */
 @Data
-public class UserVO {
+public class UserVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -19,7 +22,7 @@ public class UserVO {
 
     private UserRoleEnum role;
 
-    private List<TagEnum> tags;
+    private List<String> tags;
 
     public static UserVO fromUser(User user) {
         if (user == null) return null;
@@ -27,7 +30,7 @@ public class UserVO {
         vo.setId(user.getId());
         vo.setUsername(user.getUsername());
         vo.setRole(user.getRole());
-        vo.setTags(user.getTags());
+        vo.setTags(user.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
         return vo;
     }
 }

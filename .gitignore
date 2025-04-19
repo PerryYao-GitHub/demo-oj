@@ -92,3 +92,4 @@ coverage/
 test-results/
 junit-report/
 lcov-report/
+/dump.rdb

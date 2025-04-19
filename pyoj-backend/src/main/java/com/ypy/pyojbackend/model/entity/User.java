@@ -2,16 +2,17 @@ package com.ypy.pyojbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.ypy.pyojbackend.model.enums.TagEnum;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
+import com.ypy.pyojbackend.common.UserRoleEnum;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @TableName(value = "t_user", autoResultMap = true)
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -33,5 +34,5 @@ public class User {
 
 
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<TagEnum> tags;
+    private List<Integer> tags;
 }

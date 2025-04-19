@@ -1,21 +1,22 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.model.enums.TagEnum;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * question simple info, used in list
  */
 @Data
-public class QuestionSimpleVO {
+public class QuestionSimpleVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
     private String title;
 
-    private List<TagEnum> tags;
+    private List<String> tags;
 
     private Float acRate;
 }
