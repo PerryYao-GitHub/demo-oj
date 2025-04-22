@@ -1,8 +1,8 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.model.entity.User;
 import com.ypy.pyojbackend.common.TagEnum;
 import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.model.entity.User;
 import lombok.Data;
 
 import java.io.Serializable;

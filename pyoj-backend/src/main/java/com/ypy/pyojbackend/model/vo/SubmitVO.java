@@ -1,8 +1,9 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.codesandbox.ExecuteInfo;
+import com.ypy.pyojbackend.codesandbox.model.ExecuteInfo;
 import com.ypy.pyojbackend.common.LangEnum;
 import com.ypy.pyojbackend.common.SubmitStatusEnum;
+import com.ypy.pyojbackend.model.entity.Submit;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,13 +22,25 @@ public class SubmitVO implements Serializable {
 
     private Long questionId;
 
-    private SubmitStatusEnum submitStatus;
+    private String submitStatus;
 
-    private LangEnum lang;
+    private String lang;
 
     private String code;
 
     private ExecuteInfo executeInfo;
 
     private Date createTime;
+
+    public static SubmitVO from(Submit submit) {
+        SubmitVO vo = new SubmitVO();
+        vo.setId(submit.getId());
+        vo.setUserId(submit.getUserId());
+        vo.setQuestionId(submit.getQuestionId());
+        vo.setSubmitStatus(SubmitStatusEnum.valueTextMap.get(submit.getSubmitStatus()));
+        vo.setLang(LangEnum.valueTextMap.get(submit.getLang()));
+        vo.setCode(submit.getCode());
+        vo.setCreateTime(submit.getCreateTime());
+        return vo;
+    }
 }

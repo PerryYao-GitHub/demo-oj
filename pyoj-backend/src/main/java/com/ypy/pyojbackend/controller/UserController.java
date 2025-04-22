@@ -5,7 +5,10 @@ import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.request.UserAuthRequest;
 import com.ypy.pyojbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")

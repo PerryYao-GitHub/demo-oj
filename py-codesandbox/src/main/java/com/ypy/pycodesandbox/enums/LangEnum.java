@@ -1,6 +1,5 @@
-package com.ypy.pyojbackend.common;
+package com.ypy.pycodesandbox.enums;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,13 +8,9 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public enum SubmitStatusEnum {
-    WAITING((byte) 0, "waiting"),
-    RUNNING((byte) 1, "running"),
-    FAIL((byte) 10, "fail"),
-    AC((byte) 11, "ac");
+public enum LangEnum {
+    JAVA((byte) 0, "java");
 
-    @EnumValue
     private final byte value;
 
     private final String text;
@@ -27,7 +22,7 @@ public enum SubmitStatusEnum {
     static {
         valueTextMap = new HashMap<>();
         textValueMap = new HashMap<>();
-        for (SubmitStatusEnum e : values()) {
+        for (LangEnum e : values()) {
             valueTextMap.put(e.getValue(), e.getText());
             textValueMap.put(e.getText(), e.getValue());
         }

@@ -3,7 +3,6 @@ package com.ypy.pyojbackend.judge.model;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class JudgeConfig implements Serializable {

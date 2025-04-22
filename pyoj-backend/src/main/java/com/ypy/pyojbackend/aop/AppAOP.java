@@ -26,9 +26,8 @@ public class AppAOP {
     public Object doAuthCheck(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
         // Step 1: attain current request object
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return joinPoint.proceed(); // for non HTTP request, go ahead
-        }
+        if (attributes == null) return joinPoint.proceed(); // for non HTTP request, go ahead
+
         HttpServletRequest request = attributes.getRequest();
 
         // Step 2: attain login user through request

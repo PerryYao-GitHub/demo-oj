@@ -5,11 +5,14 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class UserAuthRequest {
+public class SubmitRequest {
 
     @NotBlank
-    private String username;
+    private Long questionId;
 
     @NotBlank
-    private String password;
+    private String lang;
+
+    @NotBlank
+    private String code;
 }

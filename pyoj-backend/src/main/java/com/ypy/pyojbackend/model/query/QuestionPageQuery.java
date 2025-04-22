@@ -1,12 +1,28 @@
 package com.ypy.pyojbackend.model.query;
 
-import com.ypy.pyojbackend.common.TagEnum;
+import lombok.Data;
 
 import java.util.List;
 
-public class QuestionPageQuery extends PageQuery {
+@Data
+public class QuestionPageQuery {
+    private int pageNum = 1;
+
+    private int pageSize = 10;
 
     private String title;
 
-    private List<TagEnum> tags;
+    private List<String> tags;
+
+    private OrderBy orderBy;
+
+    private OrderType orderType;
+
+    public enum OrderType {
+        ASC, DESC;
+    }
+
+    public enum OrderBy {
+        AC_RATE;
+    }
 }

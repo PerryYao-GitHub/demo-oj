@@ -9,7 +9,7 @@ import java.util.Date;
  * submit simple info
  */
 @Data
-public class SubmitSimpleVO implements Serializable {
+public class SubmitPageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

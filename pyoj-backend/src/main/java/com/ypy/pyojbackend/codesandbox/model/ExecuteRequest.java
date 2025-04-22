@@ -1,4 +1,4 @@
-package com.ypy.pyojbackend.codesandbox;
+package com.ypy.pyojbackend.codesandbox.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

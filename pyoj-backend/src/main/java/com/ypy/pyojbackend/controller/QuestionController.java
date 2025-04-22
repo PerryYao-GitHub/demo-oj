@@ -1,36 +1,32 @@
 package com.ypy.pyojbackend.controller;
 
-import com.ypy.pyojbackend.aop.AuthCheck;
+import com.ypy.pyojbackend.aop.LoginRequired;
 import com.ypy.pyojbackend.common.AppResponse;
-import com.ypy.pyojbackend.common.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
-import com.ypy.pyojbackend.model.request.QuestionRequest;
+import com.ypy.pyojbackend.model.query.QuestionPageQuery;
+import com.ypy.pyojbackend.model.vo.QuestionPageVO;
+import com.ypy.pyojbackend.model.vo.QuestionVO;
 import com.ypy.pyojbackend.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/question")
 public class QuestionController {
 
-    @Autowired
+    @Resource
     private QuestionService questionService;
 
-    @AuthCheck(mustRole = UserRoleEnum.ADMIN)
-    @PostMapping("/create")
-    public AppResponse<?> adminCreateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
-        return questionService.createQuestion(questionService.toQuestion(questionRequest));
+    @LoginRequired
+    @GetMapping("/{id}")
+    public AppResponse<QuestionVO> getOneQuestion(@PathVariable long id) throws AppException {
+        return questionService.getOneQuestion(id);
     }
 
-    @AuthCheck(mustRole = UserRoleEnum.ADMIN)
-    @PostMapping("/update")
-    public AppResponse<?> adminUpdateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
-        return questionService.updateQuestion(questionService.toQuestion(questionRequest));
-    }
-
-    @AuthCheck(mustRole = UserRoleEnum.ADMIN)
-    @DeleteMapping("/delete/{id}")
-    public AppResponse<?> adminDeleteQuestion(@PathVariable Long id) throws AppException {
-        return questionService.deleteQuestion(id);
+    @PostMapping("/list")
+    public AppResponse<List<QuestionPageVO>> getAllQuestions(@RequestBody QuestionPageQuery questionPageQuery) throws AppException {
+        return questionService.getQuestionPage(questionPageQuery);
     }
 }

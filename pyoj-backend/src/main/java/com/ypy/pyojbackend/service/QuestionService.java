@@ -3,10 +3,10 @@ package com.ypy.pyojbackend.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ypy.pyojbackend.common.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
-import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.entity.Question;
+import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
-import com.ypy.pyojbackend.model.vo.QuestionSimpleVO;
+import com.ypy.pyojbackend.model.vo.QuestionPageVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
 
 import java.util.List;
@@ -32,5 +32,5 @@ public interface QuestionService extends IService<Question> {
      * @param questionPageQuery
      * @return
      */
-    AppResponse<List<QuestionSimpleVO>> getQuestions(QuestionPageQuery questionPageQuery);
+    AppResponse<List<QuestionPageVO>> getQuestionPage(QuestionPageQuery questionPageQuery);
 }

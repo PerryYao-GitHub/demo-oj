@@ -1,7 +1,6 @@
 package com.ypy.pyojbackend.model.vo;
 
 import com.ypy.pyojbackend.common.TagEnum;
-import com.ypy.pyojbackend.judge.model.JudgeConfig;
 import com.ypy.pyojbackend.model.entity.Question;
 import lombok.Data;
 
@@ -10,36 +9,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * question detail info
- * hide sensitive info, like judge case
+ * question simple info, used in list
  */
 @Data
-public class QuestionVO implements Serializable {
+public class QuestionPageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
     private String title;
 
-    private String description;
-
     private List<String> tags;
 
-    private Integer submitCnt;
+    private Float acRate;
 
-    private Integer acceptedCnt;
-
-    private JudgeConfig judgeConfig;
-
-    public static QuestionVO from(Question question) {
-        QuestionVO vo = new QuestionVO();
+    public static QuestionPageVO from(Question question) {
+        QuestionPageVO vo = new QuestionPageVO();
         vo.setId(question.getId());
         vo.setTitle(question.getTitle());
-        vo.setDescription(question.getDescription());
         vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
-        vo.setSubmitCnt(question.getSubmitCnt());
-        vo.setAcceptedCnt(question.getAcceptedCnt());
-        vo.setJudgeConfig(question.getJudgeConfig());
+        vo.setAcRate(question.getSubmitCnt().equals(0) ? 0f : (float) question.getAcceptedCnt() / question.getSubmitCnt());
         return vo;
     }
 }
