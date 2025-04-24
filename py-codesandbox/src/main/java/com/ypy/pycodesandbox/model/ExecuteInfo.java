@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ExecuteInfo {
 
-    private Integer exitValue;
+    private Integer exitCode;
 
     private String message;
 

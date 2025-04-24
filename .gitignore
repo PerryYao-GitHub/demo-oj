@@ -93,3 +93,6 @@ test-results/
 junit-report/
 lcov-report/
 /dump.rdb
+
+# ===== Other =====
+/py-codesandbox/tmp-code/

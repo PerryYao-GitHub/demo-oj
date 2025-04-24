@@ -1,14 +1,17 @@
 package com.ypy.pycodesandbox;
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.ypy.pycodesandbox.enums.LangEnum;
 import com.ypy.pycodesandbox.model.ExecuteInfo;
 import com.ypy.pycodesandbox.model.AppRequest;
 import com.ypy.pycodesandbox.model.AppResponse;
-import com.ypy.pycodesandbox.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,59 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
     private static final String JAVA_CLASS_NAME = "Main.java";
 
     private static final long TIMEOUT = 5000L;
+
+    private ExecuteInfo executeProcess(Process process)
+    {
+        ExecuteInfo executeInfo = new ExecuteInfo();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            int exitCode = process.waitFor();
+            executeInfo.setExitCode(exitCode);
+
+            if (exitCode == 0) { // exit without error
+                // attain output
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                List<String> outputStrList = new ArrayList<>();
+                // read by line
+                String compileOutputLine;
+                while ((compileOutputLine = bufferedReader.readLine()) != null) {
+                    outputStrList.add(compileOutputLine);
+                }
+                executeInfo.setMessage(StrUtil.join("\n", outputStrList));
+            } else { // exit with error
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                List<String> outputStrList = new ArrayList<>();
+
+                String compileOutputLine;
+                while ((compileOutputLine = bufferedReader.readLine()) != null) {
+                    outputStrList.add(compileOutputLine);
+                }
+                executeInfo.setMessage(StrUtil.join("\n", outputStrList));
+
+                BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                List<String> errorOutputStrList = new ArrayList<>();
+                String errorCompileOutputLine;
+                while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
+                    errorOutputStrList.add(errorCompileOutputLine);
+                }
+                executeInfo.setMessage(StrUtil.join("\n", errorOutputStrList)); // error message
+            }
+            stopWatch.stop();
+            executeInfo.setTime(stopWatch.getLastTaskTimeMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return executeInfo;
+    }
+
+    private boolean validRequest(AppRequest appRequest) {
+        String code = appRequest.getCode();
+
+        Byte lang = appRequest.getLang();
+        if (lang == null || lang != LangEnum.JAVA.getValue()) return false;
+        return true;
+    }
 
     @Override
     public AppResponse exec(AppRequest request) {
@@ -40,23 +96,22 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
         File codeFile = saveCodeToFile(code);
 
         // 2. compile code file
-        ExecuteInfo compileFileMessage = compileCodeFile(codeFile);
+        ExecuteInfo compileExecuteInfo = compileCodeFile(codeFile);
 
-        if (compileFileMessage.getExitValue() != 0) { // compile error
+        if (compileExecuteInfo.getExitCode() != 0) { // compile error
             if (!deleteFile(codeFile)) log.error("delete file error");
             return AppResponse.builder()
-                    .message(compileFileMessage.getMessage())
+                    .message(compileExecuteInfo.getMessage())
                     .status(AppResponse.Status.ERR_COMPILE.getValue())
                     .build();
         }
 
         // 3. run code
-        List<ExecuteInfo> runCodeMessageList = runCodeFile(codeFile, inputList);
+        List<ExecuteInfo> runExecuteInfoList = runCodeFile(codeFile, inputList);
+        System.out.println(runExecuteInfoList);
 
         // 4. cope with run result
-        AppResponse response = getResponse(runCodeMessageList);
-
-        // 5. clear file
+        AppResponse response = getResponseFromRunExecuteInfoList(runExecuteInfoList);
         if (!deleteFile(codeFile)) log.error("delete file error");
 
         return response;
@@ -67,13 +122,14 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      * @param code
      * @return
      */
-    public File saveCodeToFile(String code) {
+    public File saveCodeToFile(String code)
+    {
         String userDir = System.getProperty("user.dir");
-        String globalCodePathName = userDir + File.separator + CODE_DIR;
-        if (!FileUtil.exist(globalCodePathName))FileUtil.mkdir(globalCodePathName);
+        String globalCodePath = userDir + File.separator + CODE_DIR;
+        if (!FileUtil.exist(globalCodePath))FileUtil.mkdir(globalCodePath);
 
         // separate users' code file
-        String codeFileParentPath = globalCodePathName + File.separator + UUID.randomUUID();
+        String codeFileParentPath = globalCodePath + File.separator + UUID.randomUUID();
         String codeFilePath = codeFileParentPath + File.separator + JAVA_CLASS_NAME;
         return FileUtil.writeString(code, codeFilePath, StandardCharsets.UTF_8);
     }
@@ -83,11 +139,12 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      * @param codeFile
      * @return
      */
-    public ExecuteInfo compileCodeFile(File codeFile) {
+    public ExecuteInfo compileCodeFile(File codeFile)
+    {
         String compileCmd = String.format("javac -encoding utf-8 %s", codeFile.getAbsolutePath());
         try {
             Process compileProcess = Runtime.getRuntime().exec(compileCmd);
-            return ProcessUtils.runProcessAndGetMessage(compileProcess);
+            return executeProcess(compileProcess);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -99,7 +156,8 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      * @param inputList
      * @return
      */
-    public List<ExecuteInfo> runCodeFile(File codeFile, List<String> inputList) {
+    public List<ExecuteInfo> runCodeFile(File codeFile, List<String> inputList)
+    {
         String codeFileParentPath = codeFile.getParentFile().getAbsolutePath();
         List<ExecuteInfo> runCodeMessageList = new ArrayList<>();
         for (String input : inputList) {
@@ -114,7 +172,8 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
                         throw new RuntimeException(e);
                     }
                 }).start();
-                ExecuteInfo executeInfo = ProcessUtils.runProcessAndGetMessage(runProcess);
+                ExecuteInfo executeInfo = executeProcess(runProcess);
+
                 runCodeMessageList.add(executeInfo);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -128,24 +187,30 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      * @param executeInfoList
      * @return
      */
-    public AppResponse getResponse(List<ExecuteInfo> executeInfoList) {
+    public AppResponse getResponseFromRunExecuteInfoList(List<ExecuteInfo> executeInfoList)
+    {
         AppResponse appResponse = new AppResponse();
         List<String> outputList = new ArrayList<>();
 
         long maxTime = 0;
+        long maxMemory = 0;
         for (ExecuteInfo executeInfo : executeInfoList) {
-            if (executeInfo.getExitValue() != 0) {
+            if (executeInfo.getExitCode() != 0) {
                 appResponse.setMessage(executeInfo.getMessage());
                 appResponse.setStatus(AppResponse.Status.ERR_RUNTIME.getValue());
                 break;
             }
             outputList.add(executeInfo.getMessage());
             if (executeInfo.getTime() != null) maxTime = Math.max(maxTime, executeInfo.getTime());
+            if (executeInfo.getMemory() != null) maxMemory = Math.max(maxMemory, executeInfo.getMemory());
         }
 
-        if (outputList.size() == executeInfoList.size()) appResponse.setStatus(AppResponse.Status.OK.getValue());
-        else appResponse.setStatus(AppResponse.Status.ERR_RUNTIME.getValue());
-        appResponse.setOutputs(outputList);
+        if (outputList.size() == executeInfoList.size()) {
+            appResponse.setStatus(AppResponse.Status.OK.getValue());
+            appResponse.setOutputs(outputList);
+        } else appResponse.setStatus(AppResponse.Status.ERR_RUNTIME.getValue());
+
+        appResponse.setMemory(maxMemory);
         appResponse.setTime(maxTime);
         return appResponse;
     }
@@ -155,7 +220,8 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      * @param codeFile
      * @return
      */
-    public boolean deleteFile(File codeFile) {
+    public boolean deleteFile(File codeFile)
+    {
         if (codeFile.getParentFile() != null) {
             String userCodeParentPath = codeFile.getParentFile().getAbsolutePath();
             return FileUtil.del(userCodeParentPath);
