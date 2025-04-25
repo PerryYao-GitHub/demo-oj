@@ -1,12 +1,13 @@
-package com.ypy.pycodesandbox;
+package com.ypy.pycodesandbox.javacodesandbox;
 
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.ypy.pycodesandbox.CodeSandbox;
 import com.ypy.pycodesandbox.enums.LangEnum;
 import com.ypy.pycodesandbox.model.ExecuteInfo;
-import com.ypy.pycodesandbox.model.AppRequest;
-import com.ypy.pycodesandbox.model.AppResponse;
+import com.ypy.pycodesandbox.app.AppRequest;
+import com.ypy.pycodesandbox.app.AppResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -16,10 +17,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Slf4j
-public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
+public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
 
     private static final String CODE_DIR = "tmp-code";
 
@@ -72,25 +74,13 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
         return executeInfo;
     }
 
-    private boolean validRequest(AppRequest appRequest) {
-        String code = appRequest.getCode();
-
-        Byte lang = appRequest.getLang();
-        if (lang == null || lang != LangEnum.JAVA.getValue()) return false;
-        return true;
-    }
-
     @Override
     public AppResponse exec(AppRequest request) {
+        // 0. check valid request
+        if (!validRequest(request)) return new AppResponse(AppResponse.Status.ERR_REQUEST, "");
+
         List<String> inputList = request.getInputs();
         String code = request.getCode();
-        Byte lang = request.getLang();
-        if (LangEnum.JAVA.getValue() != lang) {
-            return AppResponse.builder()
-                    .message("Wrong language")
-                    .status(AppResponse.Status.ERR_OTHER.getValue())
-                    .build();
-        }
 
         // 1. save code into file
         File codeFile = saveCodeToFile(code);
@@ -100,21 +90,30 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
 
         if (compileExecuteInfo.getExitCode() != 0) { // compile error
             if (!deleteFile(codeFile)) log.error("delete file error");
-            return AppResponse.builder()
-                    .message(compileExecuteInfo.getMessage())
-                    .status(AppResponse.Status.ERR_COMPILE.getValue())
-                    .build();
+            return new AppResponse(AppResponse.Status.ERR_COMPILE, compileExecuteInfo.getMessage());
         }
 
         // 3. run code
         List<ExecuteInfo> runExecuteInfoList = runCodeFile(codeFile, inputList);
-        System.out.println(runExecuteInfoList);
 
         // 4. cope with run result
         AppResponse response = getResponseFromRunExecuteInfoList(runExecuteInfoList);
         if (!deleteFile(codeFile)) log.error("delete file error");
 
         return response;
+    }
+
+    /**
+     * 0
+     * @param appRequest
+     * @return
+     */
+    public boolean validRequest(AppRequest appRequest)
+    {
+        String code = appRequest.getCode();
+        // todo: safe code
+        Byte lang = appRequest.getLang();
+        return lang != null && lang == LangEnum.JAVA.getValue();
     }
 
     /**
@@ -189,30 +188,19 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox{
      */
     public AppResponse getResponseFromRunExecuteInfoList(List<ExecuteInfo> executeInfoList)
     {
-        AppResponse appResponse = new AppResponse();
         List<String> outputList = new ArrayList<>();
 
         long maxTime = 0;
         long maxMemory = 0;
         for (ExecuteInfo executeInfo : executeInfoList) {
-            if (executeInfo.getExitCode() != 0) {
-                appResponse.setMessage(executeInfo.getMessage());
-                appResponse.setStatus(AppResponse.Status.ERR_RUNTIME.getValue());
-                break;
-            }
+            if (executeInfo.getExitCode() != 0) return new AppResponse(AppResponse.Status.ERR_RUNTIME, executeInfo.getMessage());
+
             outputList.add(executeInfo.getMessage());
             if (executeInfo.getTime() != null) maxTime = Math.max(maxTime, executeInfo.getTime());
             if (executeInfo.getMemory() != null) maxMemory = Math.max(maxMemory, executeInfo.getMemory());
         }
-
-        if (outputList.size() == executeInfoList.size()) {
-            appResponse.setStatus(AppResponse.Status.OK.getValue());
-            appResponse.setOutputs(outputList);
-        } else appResponse.setStatus(AppResponse.Status.ERR_RUNTIME.getValue());
-
-        appResponse.setMemory(maxMemory);
-        appResponse.setTime(maxTime);
-        return appResponse;
+        outputList = outputList.stream().map(String::trim).collect(Collectors.toList());
+        return new AppResponse(outputList, maxTime, maxMemory);
     }
 
     /**

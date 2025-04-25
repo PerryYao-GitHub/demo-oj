@@ -1,10 +1,10 @@
-package com.ypy.pycodesandbox;
+package com.ypy.pycodesandbox.javacodesandbox;
 
-import com.ypy.pycodesandbox.model.AppRequest;
-import com.ypy.pycodesandbox.model.AppResponse;
+import com.ypy.pycodesandbox.app.AppRequest;
+import com.ypy.pycodesandbox.app.AppResponse;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("JavaNativeCodeSandbox")
 public class JavaNativeCodeSandbox extends JavaCodeSandboxTemplate {
 
     @Override

@@ -1,4 +1,4 @@
-package com.ypy.pycodesandbox;
+package com.ypy.pycodesandbox.javacodesandbox;
 
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.ArrayUtil;
@@ -8,9 +8,8 @@ import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
-import com.ypy.pycodesandbox.enums.LangEnum;
-import com.ypy.pycodesandbox.model.AppRequest;
-import com.ypy.pycodesandbox.model.AppResponse;
+import com.ypy.pycodesandbox.app.AppRequest;
+import com.ypy.pycodesandbox.app.AppResponse;
 import com.ypy.pycodesandbox.model.ExecuteInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Component
+@Component("JavaDockerCodeSandbox")
 public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
     private static DockerClient dockerClient = DockerClientBuilder.getInstance().build();
@@ -50,7 +49,6 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
     private void createAndStartContainer(String codeFileDir)
     {
-        // create container
         CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(DOCKER_IMG);
         HostConfig hostConfig = new HostConfig();
         hostConfig.setBinds(new Bind(codeFileDir, new Volume("/app"))); // sync local file(s)(codeFileParent) into container (/app) 容器挂载目录
@@ -68,10 +66,8 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
                 .withNetworkDisabled(true)
                 .exec();
         String containerId = createContainerResponse.getId();
-        System.out.println(containerId);
         containerIdHolder.set(containerId);
 
-        // start container
         dockerClient.startContainerCmd(containerId).exec();
     }
 
@@ -88,15 +84,11 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
     @Override
     public AppResponse exec(AppRequest request) {
+        // 0. check valid request
+        if (!validRequest(request)) return new AppResponse(AppResponse.Status.ERR_REQUEST, "");
+
         List<String> inputList = request.getInputs();
         String code = request.getCode();
-        Byte lang = request.getLang();
-        if (LangEnum.JAVA.getValue() != lang) {
-            return AppResponse.builder()
-                    .message("Wrong language")
-                    .status(AppResponse.Status.ERR_OTHER.getValue())
-                    .build();
-        }
 
         // 1. save code into file
         File codeFile = saveCodeToFile(code);
@@ -105,22 +97,17 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
         String codeFileDir = codeFile.getParentFile().getAbsolutePath();
         ensureImgExist();
         createAndStartContainer(codeFileDir);
-        // 1.5 **
 
         // 2. compile code file
         ExecuteInfo compileExecuteInfo = compileCodeFile(codeFile);
 
         if (compileExecuteInfo.getExitCode() != 0) { // compile error
             if (!deleteFile(codeFile)) log.error("delete file error");
-            return AppResponse.builder()
-                    .message(compileExecuteInfo.getMessage())
-                    .status(AppResponse.Status.ERR_COMPILE.getValue())
-                    .build();
+            return new AppResponse(AppResponse.Status.ERR_COMPILE, compileExecuteInfo.getMessage());
         }
 
         // 3. run code
         List<ExecuteInfo> runExecuteInfoList = runCodeFile(codeFile, inputList);
-        System.out.println(runExecuteInfoList);
 
         // 4. cope with run result
         AppResponse response = getResponseFromRunExecuteInfoList(runExecuteInfoList);
@@ -128,11 +115,6 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
         return response;
     }
-
-
-
-
-
 
     @Override
     public ExecuteInfo compileCodeFile(File codeFile)
@@ -218,8 +200,8 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
                 @Override
                 public void onNext(Frame frame) {
                     StreamType streamType = frame.getStreamType();
-                    if (StreamType.STDERR.equals(streamType)) exitCode[0] = 1; // error
                     messageBuilder.append(new String(frame.getPayload()));
+                    if (StreamType.STDERR.equals(streamType)) exitCode[0] = 1; // error
                     super.onNext(frame);
                 }
             };

@@ -1,9 +1,9 @@
 package com.ypy.pycodesandbox.sandboxtest;
 
-import com.ypy.pycodesandbox.JavaNativeCodeSandbox;
+import com.ypy.pycodesandbox.javacodesandbox.JavaNativeCodeSandbox;
 import com.ypy.pycodesandbox.enums.LangEnum;
-import com.ypy.pycodesandbox.model.AppRequest;
-import com.ypy.pycodesandbox.model.AppResponse;
+import com.ypy.pycodesandbox.app.AppRequest;
+import com.ypy.pycodesandbox.app.AppResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -30,9 +30,9 @@ public class JavaNativeSandboxTest {
                 .build();
         AppResponse response = codeSandbox.exec(appRequest);
         System.out.println(response);
-        /*
-        success!
-         */
+/*
+AppResponse(outputs=[3, 7, 11], message=ok, status=0, memory=0, time=26)
+*/
     }
 
     @Test
@@ -50,14 +50,14 @@ public class JavaNativeSandboxTest {
                 .build();
         AppResponse response = codeSandbox.exec(appRequest);
         System.out.println(response);
-        /*
-        ExecuteResponse(outputs=null, message=/home/ypy/code/projects/demo-oj/py-codesandbox/tmp-code/1d9332eb-6a8f-40c7-8bb9-92a14019181a/Main.java:3: error: incompatible types: String cannot be converted to int
+/*
+AppResponse(outputs=null, message=/home/ypy/code/projects/demo-oj/py-codesandbox/tmp-code/021f8317-9b16-40b6-a06a-bb117f3a1535/Main.java:3: error: incompatible types: String cannot be converted to int
         int a = args[0];
                     ^
-/home/ypy/code/projects/demo-oj/py-codesandbox/tmp-code/1d9332eb-6a8f-40c7-8bb9-92a14019181a/Main.java:4: error: incompatible types: String cannot be converted to int
+/home/ypy/code/projects/demo-oj/py-codesandbox/tmp-code/021f8317-9b16-40b6-a06a-bb117f3a1535/Main.java:4: error: incompatible types: String cannot be converted to int
         int b = args[1];
                     ^
 2 errors, status=1, memory=null, time=null)
-         */
+*/
     }
 }

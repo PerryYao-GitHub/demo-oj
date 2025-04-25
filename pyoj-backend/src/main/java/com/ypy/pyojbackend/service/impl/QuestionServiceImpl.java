@@ -44,7 +44,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     @Override
     public AppResponse<?> createQuestion(Question question) throws AppException {
-        System.out.println(question.getTags());
         if (question.getId() != null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!save(question)) throw new AppException(AppCode.ERR_SYSTEM);
         return new AppResponse<>(AppCode.OK, null);

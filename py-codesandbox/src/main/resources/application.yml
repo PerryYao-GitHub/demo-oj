@@ -1,3 +1,7 @@
 server:
   port: 8964
 
+codesandbox:
+  java:
+    type: native # or docker
+

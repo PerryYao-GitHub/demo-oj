@@ -15,9 +15,8 @@
     </properties>
 
 
-
     <dependencies>
-<!--        spring-->
+        <!--        spring-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -29,7 +28,7 @@
             <scope>test</scope>
         </dependency>
 
-<!--        docker-java-->
+        <!--        docker-java-->
         <dependency>
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
@@ -42,7 +41,7 @@
             <version>3.3.0</version>
         </dependency>
 
-<!--        tools-->
+        <!--        tools-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -55,8 +54,14 @@
             <optional>true</optional>
         </dependency>
 
-    </dependencies>
+        <!--        doc 绝对不要用原生 swagger, 大垃圾! -->
+        <dependency>
+            <groupId>org.springdoc</groupId> <!-- http://localhost:8080/swagger-ui/index.html -->
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.14</version>
+        </dependency>
 
+    </dependencies>
 
 
     <dependencyManagement>
