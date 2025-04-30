@@ -1,22 +1,25 @@
 package com.ypy.pycodesandbox.javacodesandbox;
 
 import cn.hutool.core.date.StopWatch;
-import cn.hutool.core.util.ArrayUtil;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.*;
-import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
 import com.ypy.pycodesandbox.app.AppRequest;
 import com.ypy.pycodesandbox.app.AppResponse;
 import com.ypy.pycodesandbox.model.ExecuteInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Component("JavaDockerCodeSandbox")
 public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
-    private static DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+    private static final DockerClient dockerClient;
 
     private static final long TIMEOUT = 8000L;
 
@@ -33,8 +36,19 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
     private static final ThreadLocal<String> containerIdHolder = new ThreadLocal<>();
 
-    private void ensureImgExist()
-    {
+    static {
+        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+                .dockerHost(URI.create("unix:///var/run/docker.sock"))
+                .connectionTimeout(Duration.ofSeconds(30))
+                .build();
+
+        dockerClient = DockerClientImpl.getInstance(
+                DefaultDockerClientConfig.createDefaultConfigBuilder().build(),
+                httpClient
+        );
+    }
+
+    private void ensureImgExist() {
         List<Image> images = dockerClient.listImagesCmd().withImageNameFilter(DOCKER_IMG).exec();
         if (images == null || images.isEmpty()) {
             PullImageCmd pullImageCmd = dockerClient.pullImageCmd(DOCKER_IMG);
@@ -47,8 +61,7 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
         }
     }
 
-    private void createAndStartContainer(String codeFileDir)
-    {
+    private void createAndStartContainer(String codeFileDir) {
         CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(DOCKER_IMG);
         HostConfig hostConfig = new HostConfig();
         hostConfig.setBinds(new Bind(codeFileDir, new Volume("/app"))); // sync local file(s)(codeFileParent) into container (/app) 容器挂载目录
@@ -71,15 +84,12 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
         dockerClient.startContainerCmd(containerId).exec();
     }
 
-    private void stopAndDestroyContainer()
-    {
+    private void stopAndDestroyContainer() {
         String containerId = containerIdHolder.get();
         dockerClient.stopContainerCmd(containerId).exec();
         dockerClient.removeContainerCmd(containerId).exec();
         containerIdHolder.remove();
     }
-
-
 
 
     @Override
@@ -117,8 +127,7 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
     }
 
     @Override
-    public ExecuteInfo compileCodeFile(File codeFile)
-    {
+    public ExecuteInfo compileCodeFile(File codeFile) {
         String containerId = containerIdHolder.get();
 
         ExecuteInfo compileInfo = new ExecuteInfo();
@@ -167,13 +176,13 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
     /**
      * 3 create docker, copy file into docker
+     *
      * @param codeFile
      * @param inputList
      * @return
      */
     @Override
-    public List<ExecuteInfo> runCodeFile(File codeFile, List<String> inputList)
-    {
+    public List<ExecuteInfo> runCodeFile(File codeFile, List<String> inputList) {
         String containerId = containerIdHolder.get();
         List<ExecuteInfo> executeInfoList = new ArrayList<>();
         // get result in loop (run code in loop)
@@ -182,20 +191,18 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
             StopWatch stopWatch = new StopWatch();
 
             // create Exec instance, but not execute it yet
-            String[] inputArgsArray = input.split(" ");
-            String[] cmdArray = ArrayUtil.append(new String[]{"java", "-cp", "/app", "Main"}, inputArgsArray);
+            String[] cmdArray = new String[]{"java", "-cp", "/app", "Main"};
             ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                     .withCmd(cmdArray)
                     .withAttachStderr(true)
                     .withAttachStdin(true)
                     .withAttachStdout(true)
                     .exec();
-
+            String execId = execCreateCmdResponse.getId();
             // config time record
             final StringBuilder messageBuilder = new StringBuilder();
             final Integer[] exitCode = {0};
             long time = 0L;
-            String execId = execCreateCmdResponse.getId();
             ExecStartResultCallback execStartResultCallback = new ExecStartResultCallback() {
                 @Override
                 public void onNext(Frame frame) {
@@ -211,7 +218,8 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
             StatsCmd statsCmd = dockerClient.statsCmd(containerId);
             statsCmd.exec(new ResultCallback<Statistics>() {
                 @Override
-                public void onStart(Closeable closeable) {}
+                public void onStart(Closeable closeable) {
+                }
 
                 @Override
                 public void onNext(Statistics statistics) {
@@ -219,26 +227,41 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
                 }
 
                 @Override
-                public void onError(Throwable throwable) {}
+                public void onError(Throwable throwable) {
+                }
 
                 @Override
-                public void onComplete() {}
+                public void onComplete() {
+                }
 
                 @Override
-                public void close() throws IOException {}
+                public void close() throws IOException {
+                }
             });
 
             // execute here
             try {
+                PipedOutputStream stdinWriter = new PipedOutputStream();
+                PipedInputStream stdinReader = new PipedInputStream(stdinWriter);
                 stopWatch.start();
                 dockerClient.execStartCmd(execId)
-                        .exec(execStartResultCallback)
-                        .awaitCompletion(TIMEOUT, TimeUnit.MILLISECONDS);
+                        .withTty(false)
+                        .withStdIn(stdinReader)
+                        .exec(execStartResultCallback);
+
+                stdinWriter.write((input + "\n").getBytes(StandardCharsets.UTF_8));
+                stdinWriter.flush();
+                stdinWriter.close();
+
+                execStartResultCallback.awaitCompletion(TIMEOUT, TimeUnit.MILLISECONDS);
+
                 stopWatch.stop();
                 time = stopWatch.getLastTaskTimeMillis();
             } catch (InterruptedException e) {
                 exitCode[0] = 1;
                 messageBuilder.append("Timeout Error");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             } finally {
                 statsCmd.close();
             }

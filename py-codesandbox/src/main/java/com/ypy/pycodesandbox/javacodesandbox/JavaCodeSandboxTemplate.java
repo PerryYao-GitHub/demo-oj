@@ -10,9 +10,7 @@ import com.ypy.pycodesandbox.app.AppRequest;
 import com.ypy.pycodesandbox.app.AppResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,9 +158,16 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         String codeFileParentPath = codeFile.getParentFile().getAbsolutePath();
         List<ExecuteInfo> runCodeMessageList = new ArrayList<>();
         for (String input : inputList) {
-            String runCmd = String.format("java -Xmx256m -Dfile.encoding=UTF-8 -cp %s Main %s", codeFileParentPath, input);
+            String runCmd = String.format("java -Xmx256m -Dfile.encoding=UTF-8 -cp %s Main", codeFileParentPath);
             try {
                 Process runProcess = Runtime.getRuntime().exec(runCmd);
+
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(runProcess.getOutputStream()));
+                writer.write(input);
+                writer.newLine();
+                writer.flush();
+                writer.close();
+
                 new Thread(() -> {
                     try {
                         Thread.sleep(TIMEOUT);

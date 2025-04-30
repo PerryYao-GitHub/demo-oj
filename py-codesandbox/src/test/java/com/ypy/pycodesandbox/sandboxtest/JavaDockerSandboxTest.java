@@ -17,7 +17,7 @@ public class JavaDockerSandboxTest {
     JavaDockerCodeSandbox codeSandbox;
 
     @Test
-    void rightCodeTest() {
+    void rightCodeTestOld() {
         AppRequest appRequest = AppRequest.builder()
                 .lang(LangEnum.JAVA.getValue())
                 .code("public class Main {\n" +
@@ -37,7 +37,7 @@ AppResponse(outputs=[3, 7, 11], message=ok, status=0, memory=22634496, time=91)
     }
 
     @Test
-    void wrongCodeTest() {
+    void wrongCodeTestOld() {
         AppRequest appRequest = AppRequest.builder()
                 .lang(LangEnum.JAVA.getValue())
                 .code("public class Main {\n" +
@@ -61,5 +61,27 @@ AppResponse(outputs=null, message=/app/Main.java:3: error: incompatible types: S
 2 errors
 , status=1, memory=null, time=null)
  */
+    }
+
+    @Test
+    void rightCodeTestNew() {
+        AppRequest appRequest = AppRequest.builder()
+                .lang(LangEnum.JAVA.getValue())
+                .code("import java.util.Scanner;\n" +
+                        "public class Main {\n" +
+                        "    public static void main(String[] args) {\n" +
+                        "        Scanner sc = new Scanner(System.in);\n" +
+                        "        int a = sc.nextInt();\n" +
+                        "        int b = sc.nextInt();\n" +
+                        "        System.out.println(a + b);\n" +
+                        "    }\n" +
+                        "}")
+                .inputs(List.of("1 2", "3 4", "5 6"))
+                .build();
+        AppResponse response = codeSandbox.exec(appRequest);
+        System.out.println(response);
+/*
+AppResponse(outputs=[3, 7, 11], message=ok, status=0, memory=21659648, time=124)
+*/
     }
 }

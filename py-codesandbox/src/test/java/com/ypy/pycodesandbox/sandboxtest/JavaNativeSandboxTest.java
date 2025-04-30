@@ -10,13 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.util.List;
 
+
 @SpringBootTest
 public class JavaNativeSandboxTest {
     @Resource
     JavaNativeCodeSandbox codeSandbox;
 
     @Test
-    void rightCodeTest() {
+    void rightCodeTestOld() {
         AppRequest appRequest = AppRequest.builder()
                 .lang(LangEnum.JAVA.getValue())
                 .code("public class Main {\n" +
@@ -36,7 +37,7 @@ AppResponse(outputs=[3, 7, 11], message=ok, status=0, memory=0, time=26)
     }
 
     @Test
-    void wrongCodeTest() {
+    void wrongCodeTestOld() {
         AppRequest appRequest = AppRequest.builder()
                 .lang(LangEnum.JAVA.getValue())
                 .code("public class Main {\n" +
@@ -58,6 +59,28 @@ AppResponse(outputs=null, message=/home/ypy/code/projects/demo-oj/py-codesandbox
         int b = args[1];
                     ^
 2 errors, status=1, memory=null, time=null)
+*/
+    }
+
+    @Test
+    void rightCodeTestNew() {
+        AppRequest appRequest = AppRequest.builder()
+                .lang(LangEnum.JAVA.getValue())
+                .code("import java.util.Scanner;\n" +
+                        "public class Main {\n" +
+                        "    public static void main(String[] args) {\n" +
+                        "        Scanner sc = new Scanner(System.in);\n" +
+                        "        int a = sc.nextInt();\n" +
+                        "        int b = sc.nextInt();\n" +
+                        "        System.out.println(a + b);\n" +
+                        "    }\n" +
+                        "}")
+                .inputs(List.of("1 2", "3 4", "5 6"))
+                .build();
+        AppResponse response = codeSandbox.exec(appRequest);
+        System.out.println(response);
+/*
+AppResponse(outputs=[3, 7, 11], message=ok, status=0, memory=0, time=53)
 */
     }
 }
