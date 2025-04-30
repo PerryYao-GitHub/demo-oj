@@ -14,10 +14,13 @@ import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.entity.Submit;
 import com.ypy.pyojbackend.service.QuestionService;
 import com.ypy.pyojbackend.service.SubmitService;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class JudgeServiceImpl implements JudgeService {
@@ -33,8 +36,13 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private JudgeStrategy judgeStrategy;
 
+    @Resource
+    private RedissonClient redissonClient;
+
+    private static final String LOCK_PREFIX = "pyoj:judge-service:do-judge:lock:";
+
     @Override
-    public Submit doJudge(long submitId) throws AppException {
+    public void doJudge(long submitId) throws AppException {
         // step 1
         Submit submit = submitService.getById(submitId);
         if (submit == null) throw new AppException(AppCode.ERR_NOT_FOUND);
@@ -67,13 +75,21 @@ public class JudgeServiceImpl implements JudgeService {
         JudgeInfo judgeInfo = judgeStrategy.doJudge(judgeContext);
 
         // step 6
-        submit.setJudgeInfo(judgeInfo);
-        if (Objects.equals(judgeInfo.getStatus(), JudgeInfo.Status.AC.getValue())) {
-            submit.setStatus(SubmitStatusEnum.AC.getValue());
-        } else {
-            submit.setStatus(SubmitStatusEnum.FAIL.getValue());
+        RLock lk = redissonClient.getLock(LOCK_PREFIX + questionId); // ensure question cnt can be update accurately
+        try {
+            lk.lock();
+            submit.setJudgeInfo(judgeInfo);
+            question.setSubmitCnt(question.getSubmitCnt() + 1);
+            if (Objects.equals(judgeInfo.getStatus(), JudgeInfo.Status.AC.getValue())) {
+                submit.setStatus(SubmitStatusEnum.AC.getValue());
+                question.setAcceptedCnt(question.getAcceptedCnt() + 1);
+            } else {
+                submit.setStatus(SubmitStatusEnum.FAIL.getValue());
+            }
+            submitService.updateById(submit);
+            questionService.updateById(question);
+        } finally {
+            lk.unlock();
         }
-        submitService.updateById(submit);
-        return submit;
     }
 }

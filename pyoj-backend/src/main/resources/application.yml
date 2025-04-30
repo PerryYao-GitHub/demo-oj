@@ -37,6 +37,6 @@ springdoc:
 
 
 codesandbox:
-  type: fake # fake or py
+  type: py # fake or py
 
 

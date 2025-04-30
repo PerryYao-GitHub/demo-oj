@@ -3,7 +3,6 @@ package com.ypy.pyojbackend.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
-import com.ypy.pyojbackend.model.entity.User;
 import com.ypy.pyojbackend.model.enums.LangEnum;
 import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import com.ypy.pyojbackend.exception.AppException;
@@ -17,7 +16,6 @@ import com.ypy.pyojbackend.model.vo.SubmitPageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 import com.ypy.pyojbackend.service.QuestionService;
 import com.ypy.pyojbackend.service.SubmitService;
-import com.ypy.pyojbackend.service.UserService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,49 @@
 {
+  "title": "A+B",
+  "description": "输入整数A, B, 返回A+B的值",
+  "tags": ["grammar"],
+  "judgeCase": {
+    "inputs": [
+      "1 1",
+      "2 2",
+      "3 3"
+    ],
+    "outputs": [
+      "2",
+      "4",
+      "6"
+    ]
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 256
+  }
+}
+
+right code
+{
+  "questionId": 1,
+  "lang": "java",
+  "code": "import java.util.Scanner; public class Main { public static void main(String[] args) { Scanner sc = new Scanner(System.in); int a = sc.nextInt(); int b = sc.nextInt(); System.out.println(a + b); } }"
+}
+
+compile error code
+{
+  "questionId": 1,
+  "lang": "java",
+  "code": "import java.util.Scanner public class Main { public static void main(String[] args) { Scanner sc = new Scanner(System.in); int a = sc.nextInt() int b = sc.nextInt(); System.out.println(a + b); } }"
+}
+
+runtime error code
+{
+  "questionId": 1,
+  "lang": "java",
+  "code": "import java.util.Scanner; public class Main { public static void main(String[] args) { Scanner sc = new Scanner(System.in); int a = sc.nextInt(); int b = sc.nextInt(); System.out.println((a + b) / 0); } }"
+}
+
+================================
+
+{
   "title": "两数之和",
   "description": "给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的两个整数，并返回它们的数组下标。",
   "tags": ["array", "hash"],
@@ -19,6 +64,8 @@
     "memoryLimit": 256
   }
 }
+
+================================
 
 {
   "title": "有效的括号",
@@ -41,6 +88,8 @@
     "memoryLimit": 128
   }
 }
+
+================================
 
 {
   "title": "爬楼梯",

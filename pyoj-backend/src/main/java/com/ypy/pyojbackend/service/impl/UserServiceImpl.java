@@ -44,11 +44,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User getLoginUser(HttpServletRequest request) throws AppException {
-        User fakeUser = new User();
-        fakeUser.setUsername("admin-ypy");
-        fakeUser.setPassword("admin-ypy");
-        fakeUser.setRole(UserRoleEnum.ADMIN);
-        return fakeUser;
+        // fake user
+        return getById(1L);
     }
 
     @Override

@@ -5,5 +5,5 @@ import com.ypy.pyojbackend.model.entity.Submit;
 
 public interface JudgeService {
 
-    Submit doJudge(long submitId) throws AppException;
+    void doJudge(long submitId) throws AppException;
 }
