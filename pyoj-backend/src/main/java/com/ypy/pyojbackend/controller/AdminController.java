@@ -1,9 +1,9 @@
 package com.ypy.pyojbackend.controller;
 
 import com.ypy.pyojbackend.aop.AuthCheck;
-import com.ypy.pyojbackend.common.AppCode;
-import com.ypy.pyojbackend.common.AppResponse;
-import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.app.AppCode;
+import com.ypy.pyojbackend.app.AppResponse;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.job.QuestionSyncTask;
 import com.ypy.pyojbackend.model.request.QuestionRequest;

@@ -1,4 +1,4 @@
-package com.ypy.pyojbackend.common;
+package com.ypy.pyojbackend.model.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;

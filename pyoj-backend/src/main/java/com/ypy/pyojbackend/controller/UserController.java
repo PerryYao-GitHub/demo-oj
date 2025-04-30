@@ -1,6 +1,6 @@
 package com.ypy.pyojbackend.controller;
 
-import com.ypy.pyojbackend.common.AppResponse;
+import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.request.UserAuthRequest;
 import com.ypy.pyojbackend.service.UserService;

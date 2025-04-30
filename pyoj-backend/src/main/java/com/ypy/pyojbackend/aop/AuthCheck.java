@@ -1,6 +1,6 @@
 package com.ypy.pyojbackend.aop;
 
-import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

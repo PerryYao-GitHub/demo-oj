@@ -1,7 +1,7 @@
 package com.ypy.pyojbackend.aop;
 
-import com.ypy.pyojbackend.common.AppCode;
-import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.app.AppCode;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.entity.User;
 import com.ypy.pyojbackend.service.UserService;

@@ -1,16 +1,16 @@
 package com.ypy.pyojbackend.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ypy.pyojbackend.common.AppCode;
-import com.ypy.pyojbackend.common.AppResponse;
-import com.ypy.pyojbackend.common.LangEnum;
-import com.ypy.pyojbackend.common.SubmitStatusEnum;
+import com.ypy.pyojbackend.app.AppCode;
+import com.ypy.pyojbackend.app.AppResponse;
+import com.ypy.pyojbackend.model.entity.User;
+import com.ypy.pyojbackend.model.enums.LangEnum;
+import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.judge.JudgeService;
 import com.ypy.pyojbackend.mapper.SubmitMapper;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.entity.Submit;
-import com.ypy.pyojbackend.model.entity.User;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
 import com.ypy.pyojbackend.model.vo.SubmitPageVO;
@@ -34,9 +34,6 @@ public class SubmitServiceImpl
     private QuestionService questionService;
 
     @Resource
-    private UserService userService;
-
-    @Resource
     @Lazy
     private JudgeService judgeService;
 
@@ -46,7 +43,7 @@ public class SubmitServiceImpl
         submit.setQuestionId(submitRequest.getQuestionId());
         submit.setLang(LangEnum.textValueMap.get(submitRequest.getLang()));
         submit.setCode(submitRequest.getCode());
-        submit.setSubmitStatus(SubmitStatusEnum.WAITING.getValue());
+        submit.setStatus(SubmitStatusEnum.WAITING.getValue());
         return submit;
     }
 

@@ -1,7 +1,7 @@
 package com.ypy.pyojbackend.controller;
 
 import com.ypy.pyojbackend.aop.LoginRequired;
-import com.ypy.pyojbackend.common.AppResponse;
+import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.vo.QuestionPageVO;

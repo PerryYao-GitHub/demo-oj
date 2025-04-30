@@ -10,13 +10,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExecuteResponse {
+public class CodeSandboxRequest {
+    private List<String> inputs;
 
-    private List<String> outputs;
+    private String code;
 
-    private String message;
-
-    private Byte status;
-
-    private ExecuteInfo executeInfo;
+    private Byte lang;
 }

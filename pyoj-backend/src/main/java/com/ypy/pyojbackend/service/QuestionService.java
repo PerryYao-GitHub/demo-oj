@@ -1,7 +1,7 @@
 package com.ypy.pyojbackend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ypy.pyojbackend.common.AppResponse;
+import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;

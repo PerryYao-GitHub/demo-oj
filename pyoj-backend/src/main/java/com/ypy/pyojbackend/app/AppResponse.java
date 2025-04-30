@@ -1,4 +1,4 @@
-package com.ypy.pyojbackend.common;
+package com.ypy.pyojbackend.app;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

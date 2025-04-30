@@ -1,6 +1,6 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.common.TagEnum;
+import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.model.entity.Question;
 import lombok.Data;
 

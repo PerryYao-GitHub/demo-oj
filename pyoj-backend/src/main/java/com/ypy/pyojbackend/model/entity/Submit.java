@@ -2,7 +2,7 @@ package com.ypy.pyojbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.ypy.pyojbackend.codesandbox.model.ExecuteInfo;
+import com.ypy.pyojbackend.judge.model.JudgeInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,14 +20,14 @@ public class Submit implements Serializable {
 
     private Long questionId;
 
-    private Byte submitStatus;
+    private Byte status;
 
     private Byte lang;
 
     private String code;
 
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private ExecuteInfo executeInfo;
+    private JudgeInfo judgeInfo;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

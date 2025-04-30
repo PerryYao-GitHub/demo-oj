@@ -1,6 +1,6 @@
 package com.ypy.pyojbackend.exception;
 
-import com.ypy.pyojbackend.common.AppCode;
+import com.ypy.pyojbackend.app.AppCode;
 import lombok.Getter;
 
 @Getter

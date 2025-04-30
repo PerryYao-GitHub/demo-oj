@@ -1,9 +1,10 @@
 package com.ypy.pyojbackend.codesandbox;
 
-import com.ypy.pyojbackend.codesandbox.model.ExecuteRequest;
-import com.ypy.pyojbackend.codesandbox.model.ExecuteResponse;
+import com.ypy.pyojbackend.codesandbox.model.CodeSandboxRequest;
+import com.ypy.pyojbackend.codesandbox.model.CodeSandboxResponse;
+import com.ypy.pyojbackend.exception.AppException;
 
 public interface CodeSandbox {
 
-    ExecuteResponse exec(ExecuteRequest request);
+    CodeSandboxResponse exec(CodeSandboxRequest request) throws AppException;
 }

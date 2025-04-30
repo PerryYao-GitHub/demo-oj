@@ -2,7 +2,7 @@ package com.ypy.pyojbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.ypy.pyojbackend.common.UserRoleEnum;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import lombok.Data;
 
 import java.io.Serializable;
