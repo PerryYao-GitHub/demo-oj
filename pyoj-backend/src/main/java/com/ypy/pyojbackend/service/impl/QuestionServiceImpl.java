@@ -12,7 +12,7 @@ import com.ypy.pyojbackend.mapper.QuestionMapper;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
-import com.ypy.pyojbackend.model.vo.QuestionPageVO;
+import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
 import com.ypy.pyojbackend.service.QuestionService;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,6 +43,29 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
+    public QuestionVO toQuestionVO(Question question) {
+        QuestionVO vo = new QuestionVO();
+        vo.setId(question.getId());
+        vo.setTitle(question.getTitle());
+        vo.setDescription(question.getDescription());
+        vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
+        vo.setSubmitCnt(question.getSubmitCnt());
+        vo.setAcceptedCnt(question.getAcceptedCnt());
+        vo.setJudgeConfig(question.getJudgeConfig());
+        return vo;
+    }
+
+    @Override
+    public QuestionBriefVO toQuestionBriefVO(Question question) {
+        QuestionBriefVO vo = new QuestionBriefVO();
+        vo.setId(question.getId());
+        vo.setTitle(question.getTitle());
+        vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
+        vo.setAcRate(question.getSubmitCnt().equals(0) ? 0f : (float) question.getAcceptedCnt() / question.getSubmitCnt());
+        return vo;
+    }
+
+    @Override
     public AppResponse<?> createQuestion(Question question) throws AppException {
         if (question.getId() != null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!save(question)) throw new AppException(AppCode.ERR_SYSTEM);
@@ -64,7 +87,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<QuestionVO> getOneQuestion(Long questionId) throws AppException {
+    public AppResponse<QuestionVO> getQuestionById(Long questionId) throws AppException {
         String key = QuestionSyncTask.DETAIL_PREFIX + questionId;
         QuestionVO questionVO = (QuestionVO) redisTemplate.opsForValue().get(key);
         if (questionVO == null) throw new AppException(AppCode.ERR_NOT_FOUND);
@@ -72,8 +95,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<List<QuestionPageVO>> getQuestionPage(QuestionPageQuery questionPageQuery) {
-        List<QuestionPageVO> data;
+    public AppResponse<List<QuestionBriefVO>> getQuestionBriefList(QuestionPageQuery questionPageQuery) {
+        List<QuestionBriefVO> data;
         boolean hasTitle = StrUtil.isNotBlank(questionPageQuery.getTitle());
         boolean hasTags = CollUtil.isNotEmpty(questionPageQuery.getTags());
 
@@ -98,7 +121,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionPageVO> getQuestionsNoQuery(QuestionPageQuery questionPageQuery) {
+    private List<QuestionBriefVO> getQuestionsNoQuery(QuestionPageQuery questionPageQuery) {
         int pageSize = questionPageQuery.getPageSize();
         int pageNum = questionPageQuery.getPageNum();
         int start = (pageNum - 1) * pageSize;
@@ -118,7 +141,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // Object -> QuestionPageVO
         return redisList.stream()
             .filter(Objects::nonNull)
-            .map(obj -> (QuestionPageVO) obj)
+            .map(obj -> (QuestionBriefVO) obj)
             .collect(Collectors.toList());
     }
 
@@ -127,7 +150,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionPageVO> getQuestionsByTitle(QuestionPageQuery questionPageQuery) {
+    private List<QuestionBriefVO> getQuestionsByTitle(QuestionPageQuery questionPageQuery) {
         return null;
     }
 
@@ -136,7 +159,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionPageVO> getQuestionsByTags(QuestionPageQuery questionPageQuery) {
+    private List<QuestionBriefVO> getQuestionsByTags(QuestionPageQuery questionPageQuery) {
         return null;
     }
 
@@ -145,7 +168,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionPageVO> getQuestionsByTitleAndTags(QuestionPageQuery questionPageQuery) {
+    private List<QuestionBriefVO> getQuestionsByTitleAndTags(QuestionPageQuery questionPageQuery) {
         return null;
     }
 }

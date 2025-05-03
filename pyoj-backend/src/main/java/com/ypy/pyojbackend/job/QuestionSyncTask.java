@@ -2,8 +2,9 @@ package com.ypy.pyojbackend.job;
 
 import com.ypy.pyojbackend.mapper.QuestionMapper;
 import com.ypy.pyojbackend.model.entity.Question;
-import com.ypy.pyojbackend.model.vo.QuestionPageVO;
+import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
+import com.ypy.pyojbackend.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -12,7 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +31,9 @@ public class QuestionSyncTask {
     public static final String AC_RATE_DESC_LIST_KEY = "pyoj:job:question-sync-task:ac-rate-desc-list";
 
     @Resource
+    QuestionService questionService;
+
+    @Resource
     private QuestionMapper questionMapper;
 
     @Resource
@@ -42,7 +45,7 @@ public class QuestionSyncTask {
 
         List<Question> questions = questionMapper.selectList(null);
         questions.forEach((question) -> {
-            QuestionVO qvo = QuestionVO.from(question);
+            QuestionVO qvo = questionService.toQuestionVO(question);
             String key = DETAIL_PREFIX + qvo.getId();
             redisTemplate.opsForValue().set(key, qvo, 25, TimeUnit.HOURS);
         });
@@ -55,13 +58,15 @@ public class QuestionSyncTask {
         log.info("start sync question list to redis");
 
         List<Question> questions = questionMapper.selectList(null);
-        List<QuestionPageVO> voList = questions.stream().map(QuestionPageVO::from).collect(Collectors.toList());
+        List<QuestionBriefVO> voList = questions.stream()
+                .map(q -> questionService.toQuestionBriefVO(q))
+                .sorted(Comparator.comparing(QuestionBriefVO::getTitle))
+                .collect(Collectors.toList());
         // sort by title
-        voList.sort(Comparator.comparing(QuestionPageVO::getTitle));
         redisTemplate.delete(TITLE_ORDER_LIST_KEY);
         redisTemplate.opsForList().rightPushAll(TITLE_ORDER_LIST_KEY, voList);
 
-        voList.sort(Comparator.comparing(QuestionPageVO::getAcRate));
+        voList.sort(Comparator.comparing(QuestionBriefVO::getAcRate));
         // sort by ac rate asc
         redisTemplate.delete(AC_RATE_ASC_LIST_KEY);
         voList.forEach(vo -> redisTemplate.opsForList().rightPush(AC_RATE_ASC_LIST_KEY, vo));

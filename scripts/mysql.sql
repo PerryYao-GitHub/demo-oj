@@ -7,7 +7,7 @@ create table r_submit
     status       tinyint unsigned default '0'               not null comment 'status: 0->waiting, 1->running, 10->fail, 11->ac',
     lang         tinyint unsigned default '0'               not null comment 'lang: 0->java',
     code         text                                       not null comment 'code',
-    execute_info json                                       null comment 'execute info',
+    judge_result json                                       null comment 'judge result',
     is_deleted   tinyint(1)       default 0                 null comment 'is deleted',
     create_time  datetime         default CURRENT_TIMESTAMP null comment 'create time',
     update_time  datetime         default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment 'update time'
@@ -50,3 +50,4 @@ create table t_user
     tags        json                                       null comment 'user question tags'
 )
     comment 'user table';
+

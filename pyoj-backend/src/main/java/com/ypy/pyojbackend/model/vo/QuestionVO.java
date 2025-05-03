@@ -30,16 +30,4 @@ public class QuestionVO implements Serializable {
     private Integer acceptedCnt;
 
     private JudgeConfig judgeConfig;
-
-    public static QuestionVO from(Question question) {
-        QuestionVO vo = new QuestionVO();
-        vo.setId(question.getId());
-        vo.setTitle(question.getTitle());
-        vo.setDescription(question.getDescription());
-        vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
-        vo.setSubmitCnt(question.getSubmitCnt());
-        vo.setAcceptedCnt(question.getAcceptedCnt());
-        vo.setJudgeConfig(question.getJudgeConfig());
-        return vo;
-    }
 }

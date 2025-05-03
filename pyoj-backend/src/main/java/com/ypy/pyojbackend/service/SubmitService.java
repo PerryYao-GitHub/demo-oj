@@ -6,7 +6,6 @@ import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.entity.Submit;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
-import com.ypy.pyojbackend.model.vo.SubmitPageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 
 import java.util.List;
@@ -14,9 +13,17 @@ import java.util.List;
 public interface SubmitService extends IService<Submit> {
     Submit toSubmit(SubmitRequest submitRequest) throws AppException;
 
+    SubmitVO toSubmitVO(Submit submit);
+
     AppResponse<SubmitVO> doSubmit(Submit submit) throws AppException;
 
-    AppResponse<SubmitVO> getOneSubmit(Long id);
+    AppResponse<SubmitVO> getSubmitById(Long id);
 
-    AppResponse<List<SubmitPageVO>> getSubmitPage(SubmitPageQuery submitPageQuery);
+    /**
+     * check all submit by One User, of One Question
+     * @param submitPageQuery
+     * @return
+     * @throws AppException
+     */
+    AppResponse<List<SubmitVO>> getSubmitListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery);
 }

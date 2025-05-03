@@ -5,7 +5,7 @@ import com.ypy.pyojbackend.codesandbox.CodeSandboxFactory;
 import com.ypy.pyojbackend.codesandbox.model.CodeSandboxRequest;
 import com.ypy.pyojbackend.codesandbox.model.CodeSandboxResponse;
 import com.ypy.pyojbackend.app.AppCode;
-import com.ypy.pyojbackend.judge.model.JudgeInfo;
+import com.ypy.pyojbackend.judge.model.JudgeResult;
 import com.ypy.pyojbackend.judge.strategy.JudgeContext;
 import com.ypy.pyojbackend.judge.strategy.JudgeStrategy;
 import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class JudgeServiceImpl implements JudgeService {
@@ -72,15 +71,15 @@ public class JudgeServiceImpl implements JudgeService {
                 .judgeConfig(question.getJudgeConfig())
                 .judgeCase(question.getJudgeCase())
                 .build();
-        JudgeInfo judgeInfo = judgeStrategy.doJudge(judgeContext);
+        JudgeResult judgeResult = judgeStrategy.doJudge(judgeContext);
 
         // step 6
         RLock lk = redissonClient.getLock(LOCK_PREFIX + questionId); // ensure question cnt can be update accurately
         try {
             lk.lock();
-            submit.setJudgeInfo(judgeInfo);
+            submit.setJudgeResult(judgeResult);
             question.setSubmitCnt(question.getSubmitCnt() + 1);
-            if (Objects.equals(judgeInfo.getStatus(), JudgeInfo.Status.AC.getValue())) {
+            if (Objects.equals(judgeResult.getStatus(), JudgeResult.Status.AC.getValue())) {
                 submit.setStatus(SubmitStatusEnum.AC.getValue());
                 question.setAcceptedCnt(question.getAcceptedCnt() + 1);
             } else {

@@ -10,7 +10,10 @@ import com.ypy.pyojbackend.model.vo.UserVO;
 import javax.servlet.http.HttpServletRequest;
 
 public interface UserService extends IService<User> {
+
     User toUser(UserAuthRequest userAuthRequest) throws AppException;
+
+    UserVO toUserVO(User user);
 
     /**
      * get login user through session or jwt

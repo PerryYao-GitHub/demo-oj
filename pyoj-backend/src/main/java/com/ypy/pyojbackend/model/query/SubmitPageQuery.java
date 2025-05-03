@@ -8,7 +8,7 @@ public class SubmitPageQuery {
 
     private int pageSize = 10;
 
-    private Long useId;
+    private Long userId;
 
     private Long questionId;
 }

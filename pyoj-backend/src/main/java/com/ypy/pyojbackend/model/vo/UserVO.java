@@ -23,14 +23,4 @@ public class UserVO implements Serializable {
     private UserRoleEnum role;
 
     private List<String> tags;
-
-    public static UserVO fromUser(User user) {
-        if (user == null) return null;
-        UserVO vo = new UserVO();
-        vo.setId(user.getId());
-        vo.setUsername(user.getUsername());
-        vo.setRole(user.getRole());
-        vo.setTags(user.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
-        return vo;
-    }
 }

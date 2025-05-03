@@ -15,7 +15,6 @@ import java.util.List;
 @Data
 @TableName(value = "t_question", autoResultMap = true) // 使用 JSON 映射需要加 autoResultMap
 public class Question implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.ASSIGN_ID)

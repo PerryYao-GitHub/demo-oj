@@ -1,8 +1,8 @@
 package com.ypy.pyojbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.ypy.pyojbackend.judge.model.JudgeInfo;
+import com.ypy.pyojbackend.handler.JudgeResultTypeHandler;
+import com.ypy.pyojbackend.judge.model.JudgeResult;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,8 +26,8 @@ public class Submit implements Serializable {
 
     private String code;
 
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private JudgeInfo judgeInfo;
+    @TableField(typeHandler = JudgeResultTypeHandler.class)
+    private JudgeResult judgeResult;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

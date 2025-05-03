@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
+import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.mapper.UserMapper;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,6 +42,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUsername(userAuthRequest.getUsername());
         user.setPassword(userAuthRequest.getPassword());
         return user;
+    }
+
+    @Override
+    public UserVO toUserVO(User user) {
+        if (user == null) return null;
+        UserVO vo = new UserVO();
+        vo.setId(user.getId());
+        vo.setUsername(user.getUsername());
+        vo.setRole(user.getRole());
+        vo.setTags(user.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
+        return vo;
     }
 
     @Override
@@ -88,6 +101,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User selectedUser = baseMapper.selectOne(qw);
         if (selectedUser == null) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
         // todo: distributed-session or jwt
-        return new AppResponse<>(AppCode.OK, UserVO.fromUser(selectedUser));
+        return new AppResponse<>(AppCode.OK, toUserVO(selectedUser));
     }
 }

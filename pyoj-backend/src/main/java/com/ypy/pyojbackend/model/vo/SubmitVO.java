@@ -1,9 +1,6 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.judge.model.JudgeInfo;
-import com.ypy.pyojbackend.model.enums.LangEnum;
-import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
-import com.ypy.pyojbackend.model.entity.Submit;
+import com.ypy.pyojbackend.judge.model.JudgeResult;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,7 +17,11 @@ public class SubmitVO implements Serializable {
 
     private Long userId;
 
+    private String username;
+
     private Long questionId;
+
+    private String questionTitle;
 
     private String status;
 
@@ -28,19 +29,7 @@ public class SubmitVO implements Serializable {
 
     private String code;
 
-    private JudgeInfo judgeInfo;
+    private JudgeResult judgeResult;
 
     private Date createTime;
-
-    public static SubmitVO from(Submit submit) {
-        SubmitVO vo = new SubmitVO();
-        vo.setId(submit.getId());
-        vo.setUserId(submit.getUserId());
-        vo.setQuestionId(submit.getQuestionId());
-        vo.setStatus(SubmitStatusEnum.valueTextMap.get(submit.getStatus()));
-        vo.setLang(LangEnum.valueTextMap.get(submit.getLang()));
-        vo.setCode(submit.getCode());
-        vo.setCreateTime(submit.getCreateTime());
-        return vo;
-    }
 }
