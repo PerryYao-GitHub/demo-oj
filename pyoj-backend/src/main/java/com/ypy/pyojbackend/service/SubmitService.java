@@ -8,16 +8,14 @@ import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface SubmitService extends IService<Submit> {
-    Submit toSubmit(SubmitRequest submitRequest) throws AppException;
 
-    SubmitVO toSubmitVO(Submit submit);
+    AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException;
 
-    AppResponse<SubmitVO> doSubmit(Submit submit) throws AppException;
-
-    AppResponse<SubmitVO> getSubmitById(Long id);
+    AppResponse<SubmitVO> getSubmitVOById(Long id);
 
     /**
      * check all submit by One User, of One Question
@@ -25,5 +23,5 @@ public interface SubmitService extends IService<Submit> {
      * @return
      * @throws AppException
      */
-    AppResponse<List<SubmitVO>> getSubmitListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery);
+    AppResponse<List<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery);
 }

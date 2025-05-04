@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
-import com.ypy.pyojbackend.model.enums.LangEnum;
-import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.judge.JudgeService;
 import com.ypy.pyojbackend.mapper.SubmitMapper;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.entity.Submit;
+import com.ypy.pyojbackend.model.enums.LangEnum;
+import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -41,18 +42,17 @@ public class SubmitServiceImpl
     @Lazy
     private JudgeService judgeService;
 
-    @Override
-    public Submit toSubmit(SubmitRequest submitRequest) throws AppException {
+    private Submit toSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
         Submit submit = new Submit();
+        submit.setUserId(userService.getLoginUserAuthDTO(request).getId());
         submit.setQuestionId(submitRequest.getQuestionId());
-        submit.setLang(LangEnum.textValueMap.get(submitRequest.getLang()));
+        submit.setLang(LangEnum.text2value.get(submitRequest.getLang()));
         submit.setCode(submitRequest.getCode());
         submit.setStatus(SubmitStatusEnum.WAITING.getValue());
         return submit;
     }
 
-    @Override
-    public SubmitVO toSubmitVO(Submit submit) {
+    private SubmitVO toSubmitVO(Submit submit) {
         SubmitVO vo = new SubmitVO();
 
         vo.setId(submit.getId());
@@ -63,9 +63,9 @@ public class SubmitServiceImpl
         vo.setQuestionId(submit.getQuestionId());
         vo.setQuestionTitle(questionService.getById(submit.getQuestionId()).getTitle());
 
-        vo.setStatus(SubmitStatusEnum.valueTextMap.get(submit.getStatus()));
+        vo.setStatus(SubmitStatusEnum.value2text.get(submit.getStatus()));
 
-        vo.setLang(LangEnum.valueTextMap.get(submit.getLang()));
+        vo.setLang(LangEnum.value2text.get(submit.getLang()));
 
         vo.setCode(submit.getCode());
 
@@ -77,7 +77,8 @@ public class SubmitServiceImpl
     }
 
     @Override
-    public AppResponse<SubmitVO> doSubmit(Submit submit) throws AppException {
+    public AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+        Submit submit = toSubmit(submitRequest, request);
         Question question = questionService.getById(submit.getQuestionId());
         if (question == null) throw new AppException(AppCode.ERR_NOT_FOUND);
         if (!save(submit)) throw new AppException(AppCode.ERR_SYSTEM);
@@ -94,12 +95,12 @@ public class SubmitServiceImpl
     }
 
     @Override
-    public AppResponse<SubmitVO> getSubmitById(Long id) {
+    public AppResponse<SubmitVO> getSubmitVOById(Long id) {
         return new AppResponse<>(AppCode.OK, toSubmitVO(getById(id)));
     }
 
     @Override
-    public AppResponse<List<SubmitVO>> getSubmitListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery) {
+    public AppResponse<List<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery) {
         Long userId = submitPageQuery.getUserId();
         Long questionId = submitPageQuery.getQuestionId();
 
@@ -111,8 +112,8 @@ public class SubmitServiceImpl
 
         // query condition
         QueryWrapper<Submit> qw = new QueryWrapper<>();
-        qw.eq("user_id", userId);
-        qw.eq("question_id", questionId);
+        qw.eq(userId != null && userId != 0L, "user_id", userId);
+        qw.eq(questionId != null && questionId != 0L, "question_id", questionId);
         qw.orderByDesc("create_time"); // 通常按创建时间倒序
 
         // do pagination

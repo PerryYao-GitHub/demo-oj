@@ -3,10 +3,10 @@ package com.ypy.pyojbackend.codesandbox.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.codesandbox.CodeSandbox;
 import com.ypy.pyojbackend.codesandbox.model.CodeSandboxRequest;
 import com.ypy.pyojbackend.codesandbox.model.CodeSandboxResponse;
-import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.exception.AppException;
 import org.springframework.stereotype.Component;
 

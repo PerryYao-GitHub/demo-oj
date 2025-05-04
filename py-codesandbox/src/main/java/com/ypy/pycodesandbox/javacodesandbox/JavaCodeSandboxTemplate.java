@@ -4,10 +4,10 @@ import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ypy.pycodesandbox.CodeSandbox;
-import com.ypy.pycodesandbox.enums.LangEnum;
-import com.ypy.pycodesandbox.model.ExecuteInfo;
 import com.ypy.pycodesandbox.app.AppRequest;
 import com.ypy.pycodesandbox.app.AppResponse;
+import com.ypy.pycodesandbox.enums.LangEnum;
+import com.ypy.pycodesandbox.model.ExecuteInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -36,26 +36,16 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
             int exitCode = process.waitFor();
             executeInfo.setExitCode(exitCode);
 
-            if (exitCode == 0) { // exit without error
-                // attain output
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                List<String> outputStrList = new ArrayList<>();
-                // read by line
-                String compileOutputLine;
-                while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                    outputStrList.add(compileOutputLine);
-                }
-                executeInfo.setMessage(StrUtil.join("\n", outputStrList));
-            } else { // exit with error
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                List<String> outputStrList = new ArrayList<>();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            List<String> outputStrList = new ArrayList<>();
+            // read by line
+            String compileOutputLine;
+            while ((compileOutputLine = bufferedReader.readLine()) != null) {
+                outputStrList.add(compileOutputLine);
+            }
+            executeInfo.setMessage(StrUtil.join("\n", outputStrList));
 
-                String compileOutputLine;
-                while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                    outputStrList.add(compileOutputLine);
-                }
-                executeInfo.setMessage(StrUtil.join("\n", outputStrList));
-
+            if (exitCode != 0) { // exit with error
                 BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 List<String> errorOutputStrList = new ArrayList<>();
                 String errorCompileOutputLine;

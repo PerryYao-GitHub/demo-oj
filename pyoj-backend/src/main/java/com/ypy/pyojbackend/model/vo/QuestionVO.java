@@ -1,13 +1,10 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.judge.model.JudgeConfig;
-import com.ypy.pyojbackend.model.entity.Question;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * question detail info

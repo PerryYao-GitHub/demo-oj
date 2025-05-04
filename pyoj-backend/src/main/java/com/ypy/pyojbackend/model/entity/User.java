@@ -2,7 +2,6 @@ package com.ypy.pyojbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,7 +20,7 @@ public class User implements Serializable {
 
     private String password;
 
-    private UserRoleEnum role;
+    private Byte role;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

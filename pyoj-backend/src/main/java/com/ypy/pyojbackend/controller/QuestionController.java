@@ -10,6 +10,7 @@ import com.ypy.pyojbackend.service.QuestionService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -22,11 +23,16 @@ public class QuestionController {
     @LoginRequired
     @GetMapping("/{id}")
     public AppResponse<QuestionVO> getOneQuestion(@PathVariable long id) throws AppException {
-        return questionService.getQuestionById(id);
+        return questionService.getQuestionVOById(id);
     }
 
     @PostMapping("/list")
     public AppResponse<List<QuestionBriefVO>> getAllQuestions(@RequestBody QuestionPageQuery questionPageQuery) throws AppException {
-        return questionService.getQuestionBriefList(questionPageQuery);
+        return questionService.getQuestionBriefVOList(questionPageQuery);
+    }
+
+    @GetMapping("/recommend")
+    public AppResponse<List<QuestionBriefVO>> getRecommend(HttpServletRequest request) {
+        return null;
     }
 }

@@ -1,0 +1,877 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PYOJ 后台接口文档",
+    "version": "v1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "cookieAuth": [],
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/user/update": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseUserVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/reset/password": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "resetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/submit": {
+      "get": {
+        "tags": [
+          "submit-controller"
+        ],
+        "operationId": "getSubmitById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseSubmitVO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "submit-controller"
+        ],
+        "operationId": "getSubmitList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitPageQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseListSubmitVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/submit/do": {
+      "post": {
+        "tags": [
+          "submit-controller"
+        ],
+        "operationId": "submit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question/list": {
+      "post": {
+        "tags": [
+          "question-controller"
+        ],
+        "operationId": "getAllQuestions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionPageQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseListQuestionBriefVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/update/question": {
+      "post": {
+        "tags": [
+          "admin-controller"
+        ],
+        "operationId": "adminUpdateQuestion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/create/question": {
+      "post": {
+        "tags": [
+          "admin-controller"
+        ],
+        "operationId": "adminCreateQuestion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseUserVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question/{id}": {
+      "get": {
+        "tags": [
+          "question-controller"
+        ],
+        "operationId": "getOneQuestion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseQuestionVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question/recommend": {
+      "get": {
+        "tags": [
+          "question-controller"
+        ],
+        "operationId": "getRecommend",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseListQuestionBriefVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/sync/question": {
+      "get": {
+        "tags": [
+          "admin-controller"
+        ],
+        "operationId": "syncQuestion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/delete/question/{id}": {
+      "delete": {
+        "tags": [
+          "admin-controller"
+        ],
+        "operationId": "adminDeleteQuestion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AppResponseUserVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserVO"
+          }
+        }
+      },
+      "UserVO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UserAuthRequest": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "oldPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "AppResponseObject": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "SubmitPageQuery": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppResponseListSubmitVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmitVO"
+            }
+          }
+        }
+      },
+      "JudgeResult": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "format": "byte"
+          },
+          "memory": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SubmitVO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionTitle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "judgeResult": {
+            "$ref": "#/components/schemas/JudgeResult"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SubmitRequest": {
+        "required": [
+          "code",
+          "lang",
+          "questionId"
+        ],
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "QuestionPageQuery": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "AC_RATE"
+            ]
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          }
+        }
+      },
+      "AppResponseListQuestionBriefVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionBriefVO"
+            }
+          }
+        }
+      },
+      "QuestionBriefVO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "acRate": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "JudgeCase": {
+        "type": "object",
+        "properties": {
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "JudgeConfig": {
+        "type": "object",
+        "properties": {
+          "timeLimit": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "memoryLimit": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuestionRequest": {
+        "required": [
+          "description",
+          "tags",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "judgeCase": {
+            "$ref": "#/components/schemas/JudgeCase"
+          },
+          "judgeConfig": {
+            "$ref": "#/components/schemas/JudgeConfig"
+          }
+        }
+      },
+      "AppResponseSubmitVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SubmitVO"
+          }
+        }
+      },
+      "AppResponseQuestionVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/QuestionVO"
+          }
+        }
+      },
+      "QuestionVO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "submitCnt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedCnt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "judgeConfig": {
+            "$ref": "#/components/schemas/JudgeConfig"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "name": "JSESSIONID",
+        "in": "cookie"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

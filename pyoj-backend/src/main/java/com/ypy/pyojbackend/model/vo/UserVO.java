@@ -1,13 +1,9 @@
 package com.ypy.pyojbackend.model.vo;
 
-import com.ypy.pyojbackend.model.enums.TagEnum;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
-import com.ypy.pyojbackend.model.entity.User;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * user detail info
@@ -20,7 +16,7 @@ public class UserVO implements Serializable {
 
     private String username;
 
-    private UserRoleEnum role;
+    private String role;
 
     private List<String> tags;
 }

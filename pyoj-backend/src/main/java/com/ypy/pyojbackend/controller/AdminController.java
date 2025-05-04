@@ -3,9 +3,9 @@ package com.ypy.pyojbackend.controller;
 import com.ypy.pyojbackend.aop.AuthCheck;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.job.QuestionSyncTask;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
 import com.ypy.pyojbackend.service.QuestionService;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +31,12 @@ public class AdminController {
 
     @PostMapping("/create/question")
     public AppResponse<?> adminCreateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
-        return questionService.createQuestion(questionService.toQuestion(questionRequest));
+        return questionService.createQuestion(questionRequest);
     }
 
     @PostMapping("/update/question")
     public AppResponse<?> adminUpdateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
-        return questionService.updateQuestion(questionService.toQuestion(questionRequest));
+        return questionService.updateQuestion(questionRequest);
     }
 
     @DeleteMapping("/delete/question/{id}")

@@ -12,4 +12,6 @@ public class UserAuthRequest {
 
     @NotBlank
     private String password;
+
+    private String oldPassword;
 }

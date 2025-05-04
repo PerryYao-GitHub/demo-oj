@@ -7,8 +7,8 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public enum SubmitStatusEnum {
     WAITING((byte) 0, "waiting"),
     RUNNING((byte) 1, "running"),
@@ -20,16 +20,16 @@ public enum SubmitStatusEnum {
 
     private final String text;
 
-    public static final Map<Byte, String> valueTextMap;
+    public static final Map<Byte, String> value2text;
 
-    public static final Map<String, Byte> textValueMap;
+    public static final Map<String, Byte> text2value;
 
     static {
-        valueTextMap = new HashMap<>();
-        textValueMap = new HashMap<>();
+        value2text = new HashMap<>();
+        text2value = new HashMap<>();
         for (SubmitStatusEnum e : values()) {
-            valueTextMap.put(e.getValue(), e.getText());
-            textValueMap.put(e.getText(), e.getValue());
+            value2text.put(e.getValue(), e.getText());
+            text2value.put(e.getText(), e.getValue());
         }
     }
 }

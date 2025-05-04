@@ -12,15 +12,14 @@ import com.ypy.pyojbackend.model.vo.QuestionVO;
 import java.util.List;
 
 public interface QuestionService extends IService<Question> {
-    Question toQuestion(QuestionRequest questionRequest);
 
     QuestionVO toQuestionVO(Question question);
 
     QuestionBriefVO toQuestionBriefVO(Question question);
 
-    AppResponse<?> createQuestion(Question question) throws AppException;
+    AppResponse<?> createQuestion(QuestionRequest questionRequest) throws AppException;
 
-    AppResponse<?> updateQuestion(Question question) throws AppException;
+    AppResponse<?> updateQuestion(QuestionRequest questionRequest) throws AppException;
 
     AppResponse<?> deleteQuestion(Long id) throws AppException;
 
@@ -29,12 +28,12 @@ public interface QuestionService extends IService<Question> {
      * @param questionId
      * @return
      */
-    AppResponse<QuestionVO> getQuestionById(Long questionId) throws AppException;
+    AppResponse<QuestionVO> getQuestionVOById(Long questionId) throws AppException;
 
     /**
      * for user to browse questions' simple info
      * @param questionPageQuery
      * @return
      */
-    AppResponse<List<QuestionBriefVO>> getQuestionBriefList(QuestionPageQuery questionPageQuery);
+    AppResponse<List<QuestionBriefVO>> getQuestionBriefVOList(QuestionPageQuery questionPageQuery);
 }

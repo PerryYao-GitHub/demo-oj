@@ -30,16 +30,16 @@ public enum TagEnum {
 
     private final String text;
 
-    public static final Map<Integer, String> valueTextMap;
+    public static final Map<Integer, String> value2text;
 
-    public static final Map<String, Integer> textValueMap;
+    public static final Map<String, Integer> text2value;
 
     static {
-        valueTextMap = new HashMap<>();
-        textValueMap = new HashMap<>();
+        value2text = new HashMap<>();
+        text2value = new HashMap<>();
         for (TagEnum e : values()) {
-            valueTextMap.put(e.getValue(), e.getText());
-            textValueMap.put(e.getText(), e.getValue());
+            value2text.put(e.getValue(), e.getText());
+            text2value.put(e.getText(), e.getValue());
         }
     }
 }

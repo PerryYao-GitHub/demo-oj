@@ -5,11 +5,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
-import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.job.QuestionSyncTask;
 import com.ypy.pyojbackend.mapper.QuestionMapper;
 import com.ypy.pyojbackend.model.entity.Question;
+import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
 import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
@@ -29,9 +29,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Override
-    public Question toQuestion(QuestionRequest questionRequest) {
-        List<Integer> tags = questionRequest.getTags().stream().map(TagEnum.textValueMap::get).collect(Collectors.toList());
+    private Question toQuestion(QuestionRequest questionRequest) {
+        List<Integer> tags = questionRequest.getTags().stream().map(TagEnum.text2value::get).collect(Collectors.toList());
         Question question = new Question();
         question.setId(questionRequest.getId());
         question.setTitle(questionRequest.getTitle());
@@ -48,7 +47,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         vo.setId(question.getId());
         vo.setTitle(question.getTitle());
         vo.setDescription(question.getDescription());
-        vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
+        vo.setTags(question.getTags().stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
         vo.setSubmitCnt(question.getSubmitCnt());
         vo.setAcceptedCnt(question.getAcceptedCnt());
         vo.setJudgeConfig(question.getJudgeConfig());
@@ -60,20 +59,22 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         QuestionBriefVO vo = new QuestionBriefVO();
         vo.setId(question.getId());
         vo.setTitle(question.getTitle());
-        vo.setTags(question.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
+        vo.setTags(question.getTags().stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
         vo.setAcRate(question.getSubmitCnt().equals(0) ? 0f : (float) question.getAcceptedCnt() / question.getSubmitCnt());
         return vo;
     }
 
     @Override
-    public AppResponse<?> createQuestion(Question question) throws AppException {
+    public AppResponse<?> createQuestion(QuestionRequest questionRequest) throws AppException {
+        Question question = toQuestion(questionRequest);
         if (question.getId() != null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!save(question)) throw new AppException(AppCode.ERR_SYSTEM);
         return new AppResponse<>(AppCode.OK, null);
     }
 
     @Override
-    public AppResponse<?> updateQuestion(Question question) throws AppException {
+    public AppResponse<?> updateQuestion(QuestionRequest questionRequest) throws AppException {
+        Question question = toQuestion(questionRequest);
         if (question.getId() == null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!updateById(question)) throw new AppException(AppCode.ERR_SYSTEM);
         return new AppResponse<>(AppCode.OK, null);
@@ -87,7 +88,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<QuestionVO> getQuestionById(Long questionId) throws AppException {
+    public AppResponse<QuestionVO> getQuestionVOById(Long questionId) throws AppException {
         String key = QuestionSyncTask.DETAIL_PREFIX + questionId;
         QuestionVO questionVO = (QuestionVO) redisTemplate.opsForValue().get(key);
         if (questionVO == null) throw new AppException(AppCode.ERR_NOT_FOUND);
@@ -95,7 +96,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<List<QuestionBriefVO>> getQuestionBriefList(QuestionPageQuery questionPageQuery) {
+    public AppResponse<List<QuestionBriefVO>> getQuestionBriefVOList(QuestionPageQuery questionPageQuery) {
         List<QuestionBriefVO> data;
         boolean hasTitle = StrUtil.isNotBlank(questionPageQuery.getTitle());
         boolean hasTags = CollUtil.isNotEmpty(questionPageQuery.getTags());

@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
-import com.ypy.pyojbackend.model.enums.TagEnum;
-import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.mapper.UserMapper;
+import com.ypy.pyojbackend.model.dto.UserAuthDTO;
 import com.ypy.pyojbackend.model.entity.User;
+import com.ypy.pyojbackend.model.enums.TagEnum;
+import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.model.request.UserAuthRequest;
+import com.ypy.pyojbackend.model.request.UserUpdateRequest;
 import com.ypy.pyojbackend.model.vo.UserVO;
 import com.ypy.pyojbackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -32,11 +36,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private static final String LOCK_PREFIX = "pyoj:user-service:register:lock:";
 
+    private static final String SESSION_ATTRIBUTE = "loginUser";
+
     @Resource
     private RedissonClient redissonClient; // for redis distributed lock
 
-    @Override
-    public User toUser(UserAuthRequest userAuthRequest) throws AppException {
+    private UserVO toUserVO(User user) {
+        UserVO vo = new UserVO();
+        vo.setId(user.getId());
+        vo.setUsername(user.getUsername());
+        vo.setRole(UserRoleEnum.value2text.get(user.getRole()));
+        List<Integer> tags = user.getTags() == null ? Collections.emptyList() : user.getTags();
+        vo.setTags(tags.stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
+        return vo;
+    }
+
+    private UserAuthDTO toUserAuthDTO(User user) {
+        UserAuthDTO dto = new UserAuthDTO();
+        dto.setId(user.getId());
+        dto.setRole(user.getRole());
+        return dto;
+    }
+
+    private User toUser(UserAuthRequest userAuthRequest) throws AppException {
         if (!userAuthRequest.getUsername().matches(VALID_REGEX) || !userAuthRequest.getPassword().matches(VALID_REGEX)) throw new AppException(AppCode.ERR_INVALID_USR_PWD);
         User user = new User();
         user.setUsername(userAuthRequest.getUsername());
@@ -44,25 +66,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
-    @Override
-    public UserVO toUserVO(User user) {
-        if (user == null) return null;
-        UserVO vo = new UserVO();
-        vo.setId(user.getId());
-        vo.setUsername(user.getUsername());
-        vo.setRole(user.getRole());
-        vo.setTags(user.getTags().stream().map(TagEnum.valueTextMap::get).collect(Collectors.toList()));
-        return vo;
+    private void toUser(UserUpdateRequest userUpdateRequest, User user) {
+        List<String> tags = userUpdateRequest.getTags() == null ? Collections.emptyList() : userUpdateRequest.getTags();
+        user.setTags(tags.stream()
+                .map(TagEnum.text2value::get)
+                .collect(Collectors.toList())
+        );
     }
 
     @Override
-    public User getLoginUser(HttpServletRequest request) throws AppException {
-        // fake user
-        return getById(1L);
+    public UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) throws AppException {
+        return (UserAuthDTO) request.getSession().getAttribute(SESSION_ATTRIBUTE);
     }
 
     @Override
-    public AppResponse<?> register(User user) throws AppException {
+    public AppResponse<?> register(UserAuthRequest userAuthRequest) throws AppException {
+        User user = toUser(userAuthRequest);
         String lockKey = LOCK_PREFIX + user.getUsername();
         RLock lk = redissonClient.getLock(lockKey);
         boolean acquired = false;
@@ -75,7 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (baseMapper.exists(qw)) throw new AppException(AppCode.ERR_SAME_USERNAME);
             String encryptedPassword = DigestUtil.md5Hex(SALT + user.getPassword());
             user.setPassword(encryptedPassword);
-            user.setRole(UserRoleEnum.USER);
+            user.setRole(UserRoleEnum.USER.getValue());
             if (!save(user)) throw new AppException(AppCode.ERR_SYSTEM);
             return new AppResponse<>(AppCode.OK, null);
         } catch (InterruptedException e) {
@@ -93,14 +112,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public AppResponse<UserVO> login(User user) throws AppException {
+    public AppResponse<UserVO> login(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+        toUser(userAuthRequest); // valid user
+
+        String encryptedPassword = DigestUtil.md5Hex(SALT + userAuthRequest.getPassword());
         QueryWrapper<User> qw = new QueryWrapper<>();
-        String encryptedPassword = DigestUtil.md5Hex(SALT + user.getPassword());
-        qw.eq("username", user.getUsername());
+        qw.eq("username", userAuthRequest.getUsername());
         qw.eq("password", encryptedPassword);
-        User selectedUser = baseMapper.selectOne(qw);
-        if (selectedUser == null) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
-        // todo: distributed-session or jwt
-        return new AppResponse<>(AppCode.OK, toUserVO(selectedUser));
+        User user = baseMapper.selectOne(qw);
+        if (user == null) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
+
+        // session login
+        UserAuthDTO dto = toUserAuthDTO(user);
+        request.getSession().setAttribute(SESSION_ATTRIBUTE, dto);
+
+        return new AppResponse<>(AppCode.OK, toUserVO(user));
+        // vo.setToken(TokenUtil.gen(...)); // use jwt token
+    }
+
+    @Override
+    public AppResponse<UserVO> getLoginUserVO(HttpServletRequest request) throws AppException {
+        return new AppResponse<>(AppCode.OK, toUserVO(getById(getLoginUserAuthDTO(request))));
+    }
+
+    @Override
+    public AppResponse<?> logout(HttpServletRequest request) throws AppException {
+        request.getSession().removeAttribute(SESSION_ATTRIBUTE);
+        return new AppResponse<>(AppCode.OK, null);
+    }
+
+    @Override
+    public AppResponse<?> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+        toUser(userAuthRequest);
+        User user = getById(getLoginUserAuthDTO(request));
+        if (!user.getUsername().equals(userAuthRequest.getUsername())) throw new AppException(AppCode.ERR_FORBIDDEN);
+
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.eq("username", userAuthRequest.getUsername());
+        qw.eq("password", DigestUtil.md5Hex(SALT + userAuthRequest.getOldPassword()));
+        if (count(qw) != 1) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
+
+        user.setPassword(DigestUtil.md5Hex(SALT + userAuthRequest.getPassword()));
+        if (!updateById(user)) throw new AppException(AppCode.ERR_SYSTEM);
+        logout(request);
+        return new AppResponse<>(AppCode.OK, null);
+    }
+
+    @Override
+    public AppResponse<UserVO> userUpdate(UserUpdateRequest userUpdateRequest, HttpServletRequest request) throws AppException {
+        User user = getById(getLoginUserAuthDTO(request));
+        toUser(userUpdateRequest, user);
+        if (!updateById(user)) throw new AppException(AppCode.ERR_SYSTEM);
+        return new AppResponse<>(AppCode.OK, null);
     }
 }
