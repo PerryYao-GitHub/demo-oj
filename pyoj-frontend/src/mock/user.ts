@@ -19,6 +19,17 @@ export default [
           }
         }
       }
+      if (username === 'user' && password === '123456') {
+        return {
+          code: 0,
+          message: '登录成功',
+          data: {
+            id: 2,
+            username: 'user',
+            role: 'user'
+          }
+        }
+      }
       return {
         code: 401,
         message: '用户名或密码错误',
@@ -26,6 +37,7 @@ export default [
       }
     }
   },
+
   {
     url: '/api/user/register',
     method: 'post',
@@ -36,7 +48,25 @@ export default [
         data: {
           id: Math.floor(Math.random() * 1000),
           username: req.body.username,
-          isAdmin: false
+          role: 'user',
+          tags: []
+        }
+      }
+    }
+  },
+
+  {
+    url: '/api/user',
+    method: 'get',
+    response: (): AppResponse<UserVO> => {
+      return {
+        code: 0,
+        message: '获取用户信息成功',
+        data: {
+          id: 2,
+          username: 'user',
+          role: 'user',
+          tags: ["hash", "binary tree"]
         }
       }
     }
