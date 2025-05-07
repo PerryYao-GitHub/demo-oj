@@ -5,6 +5,7 @@ import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 import com.ypy.pyojbackend.service.SubmitService;
 import com.ypy.pyojbackend.service.UserService;
@@ -22,11 +23,8 @@ public class SubmitController {
     @Resource
     private SubmitService submitService;
 
-    @Resource
-    private UserService userService;
-
     @PostMapping("/do")
-    public AppResponse<?> submit(@RequestBody SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<SubmitVO> submit(@RequestBody SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
         return submitService.doSubmit(submitRequest, request);
     }
 
@@ -36,7 +34,7 @@ public class SubmitController {
     }
 
     @PostMapping("")
-    public AppResponse<List<SubmitVO>> getSubmitList(@RequestBody SubmitPageQuery submitPageQuery) throws AppException {
+    public AppResponse<PageVO<SubmitVO>> getSubmitList(@RequestBody SubmitPageQuery submitPageQuery) throws AppException {
         return submitService.getSubmitVOListByUserIdOrQuestionId(submitPageQuery);
     }
 }

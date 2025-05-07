@@ -1,35 +1,32 @@
 <template>
   <div class="question-list">
-    <div v-for="question in questions" :key="question.id" class="question-item">
+    <div
+      v-for="question in questions"
+      :key="question.id"
+      class="question-item"
+      @click="navigateToQuestion(question.id)"
+    >
+    <div class="content">
       <span class="title">{{ question.title }}</span>
       <span class="tags">{{ question.tags.join(', ') }}</span>
       <span class="ac-rate">{{ question.acRate }}%</span>
-      <div class="actions">
-        <button
-          :disabled="!isUserLoggedIn"
-          @click="$emit('solve', question.id)"
-        >
-          Solve
-        </button>
-        <button
-          :disabled="!isUserLoggedIn"
-          @click="$emit('view-solutions', question.id)"
-        >
-          View Solutions
-        </button>
-        <button
-          :disabled="!isUserLoggedIn"
-          @click="$emit('my-solutions', question.id)"
-        >
-          My Solutions
-        </button>
+    </div>
+    <div class="more">
+      <div class="dropdown">
+        <span class="dots" @click.stop="toggleDropdown(question.id)">⋮</span>
+        <div v-if="dropdownVisible === question.id" class="dropdown-menu">
+          <button @click.stop="$emit('view-solutions', question.id)">View Solutions</button>
+          <button @click.stop="$emit('my-solutions', question.id)">My Solutions</button>
+        </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import type { QuestionBriefVO } from '../types/question'
 
@@ -37,16 +34,35 @@ export default defineComponent({
   name: 'QuestionList',
   props: {
     questions: {
-      type: Array as PropType<QuestionBriefVO[]>,
+      type: Array as () => QuestionBriefVO[],
       required: true
     }
   },
   setup() {
+    const router = useRouter()
     const userStore = useUserStore()
-    const isUserLoggedIn = userStore.isLogin()
+    const dropdownVisible = ref<number | null>(null)
+
+    const navigateToQuestion = (id: number) => {
+      if (!userStore.isLogin()) {
+        alert('Please log in to view the question.')
+        return
+      }
+      router.push(`/question/${id}`)
+    }
+
+    const toggleDropdown = (id: number) => {
+      if (!userStore.isLogin()) {
+        alert('Please log in to view the question.')
+        return
+      }
+      dropdownVisible.value = dropdownVisible.value === id ? null : id
+    }
 
     return {
-      isUserLoggedIn
+      navigateToQuestion,
+      toggleDropdown,
+      dropdownVisible
     }
   }
 })
@@ -67,37 +83,79 @@ export default defineComponent({
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
+  cursor: pointer;
+  position: relative;
 }
 
-.question-item .title {
-  flex: 2; /* 标题占较多空间 */
+.question-item:hover {
+  background-color: #f5f5f5;
+}
+
+.more {
+  display: flex;
+  align-items: center;
+}
+
+.dots {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  z-index: 10;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.5em;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f5f5f5;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  flex: 2;
   font-weight: bold;
 }
 
-.question-item .tags {
-  flex: 3; /* 标签占中等空间 */
+.dots {
+  font-size: 1.5em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tags {
+  flex: 3;
   color: #666;
 }
 
-.question-item .ac-rate {
-  flex: 1; /* AC Rate 占较少空间 */
+.ac-rate {
+  flex: 1;
   text-align: center;
-}
-
-.question-item .actions {
-  flex: 2; /* 按钮区域 */
-  display: flex;
-  gap: 0.5em;
-  justify-content: flex-end;
-}
-
-.actions button {
-  padding: 0.3em 0.6em;
-  font-size: 0.9em;
-}
-
-.actions button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 </style>

@@ -39,6 +39,18 @@ export default [
   },
 
   {
+    url: '/api/user/logout',
+    method: 'get',
+    response: (): AppResponse<null> => {
+      return {
+        code: 0,
+        message: '登出成功',
+        data: null
+      }
+    }
+  },
+
+  {
     url: '/api/user/register',
     method: 'post',
     response: (req: { body: UserAuthRequest }): AppResponse<UserVO> => {

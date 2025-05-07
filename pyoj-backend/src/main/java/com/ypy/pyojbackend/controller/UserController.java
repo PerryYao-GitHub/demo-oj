@@ -20,12 +20,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public AppResponse<?> register(@RequestBody UserAuthRequest userAuthRequest) throws AppException {
+    public AppResponse<Void> register(@RequestBody UserAuthRequest userAuthRequest) throws AppException {
         return userService.register(userAuthRequest);
     }
 
     @PostMapping("/login")
-    public AppResponse<?> login(@RequestBody UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<UserVO> login(@RequestBody UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
         return userService.login(userAuthRequest, request);
     }
 
@@ -37,13 +37,13 @@ public class UserController {
 
     @LoginRequired
     @GetMapping("/logout")
-    public AppResponse<?> logout(HttpServletRequest request) throws AppException {
+    public AppResponse<Void> logout(HttpServletRequest request) throws AppException {
         return userService.logout(request);
     }
 
     @LoginRequired
     @PostMapping("/reset/password")
-    public AppResponse<?> resetPassword(@RequestBody UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<Void> resetPassword(@RequestBody UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
         return userService.resetPassword(userAuthRequest, request);
     }
 

@@ -3,10 +3,7 @@ package com.ypy.pyojbackend.model.query;
 import lombok.Data;
 
 @Data
-public class SubmitPageQuery {
-    private int pageNum = 1;
-
-    private int pageSize = 10;
+public class SubmitPageQuery extends PageQuery {
 
     private Long userId;
 

@@ -6,10 +6,9 @@ import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
-
-import java.util.List;
 
 public interface QuestionService extends IService<Question> {
 
@@ -17,11 +16,11 @@ public interface QuestionService extends IService<Question> {
 
     QuestionBriefVO toQuestionBriefVO(Question question);
 
-    AppResponse<?> createQuestion(QuestionRequest questionRequest) throws AppException;
+    AppResponse<Void> createQuestion(QuestionRequest questionRequest) throws AppException;
 
-    AppResponse<?> updateQuestion(QuestionRequest questionRequest) throws AppException;
+    AppResponse<Void> updateQuestion(QuestionRequest questionRequest) throws AppException;
 
-    AppResponse<?> deleteQuestion(Long id) throws AppException;
+    AppResponse<Void> deleteQuestion(Long id) throws AppException;
 
     /**
      * for user to get one question's detail info
@@ -35,5 +34,5 @@ public interface QuestionService extends IService<Question> {
      * @param questionPageQuery
      * @return
      */
-    AppResponse<List<QuestionBriefVO>> getQuestionBriefVOList(QuestionPageQuery questionPageQuery);
+    AppResponse<PageVO<QuestionBriefVO>> getQuestionBriefVOPage(QuestionPageQuery questionPageQuery);
 }

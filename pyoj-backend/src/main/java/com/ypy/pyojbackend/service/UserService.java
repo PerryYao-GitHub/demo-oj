@@ -32,7 +32,7 @@ public interface UserService extends IService<User> {
      * @return
      * @throws AppException
      */
-    AppResponse<?> register(UserAuthRequest userAuthRequest) throws AppException;
+    AppResponse<Void> register(UserAuthRequest userAuthRequest) throws AppException;
 
     /**
      * implement step:
@@ -47,9 +47,9 @@ public interface UserService extends IService<User> {
 
     AppResponse<UserVO> getLoginUserVO(HttpServletRequest request) throws AppException;
 
-    AppResponse<?> logout(HttpServletRequest request) throws AppException;
+    AppResponse<Void> logout(HttpServletRequest request) throws AppException;
 
-    AppResponse<?> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException;
+    AppResponse<Void> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException;
 
     AppResponse<UserVO> userUpdate(UserUpdateRequest userUpdateRequest, HttpServletRequest request) throws AppException;
 }

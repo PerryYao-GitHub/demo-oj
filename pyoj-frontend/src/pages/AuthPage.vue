@@ -1,22 +1,27 @@
 <template>
   <div class="auth-page">
-    <h1>{{ isLoginMode ? 'Login' : 'Register' }}</h1>
+    <h2 style="text-align: center;">{{ isLoginMode ? 'Login' : 'Register' }}</h2>
     <form @submit.prevent="handleSubmit">
       <div>
         <label for="username">Username</label>
         <input v-model="username" id="username" type="text" required />
       </div>
+      
       <div>
         <label for="password">Password</label>
         <input v-model="password" id="password" type="password" required />
       </div>
+      
       <div v-if="!isLoginMode">
         <label for="confirmPassword">Confirm password</label>
         <input v-model="confirmPassword" id="confirmPassword" type="password" required />
       </div>
-      <button type="submit">{{ isLoginMode ? 'Login' : 'Register' }}</button>
+
+      <div style="text-align: center;">
+        <button type="submit">{{ isLoginMode ? 'Login' : 'Register' }}</button>
+      </div>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     <p class="toggle-mode">
       {{ isLoginMode ? 'Don\'t have an account?' : 'Have an account?' }}
       <a href="#" @click.prevent="toggleMode">{{ isLoginMode ? 'Register' : 'Login' }}</a>
@@ -103,6 +108,26 @@ export default {
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
+}
+
+.auth-page form > div {
+  margin-bottom: 15px; /* 增加输入框之间的间距 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 确保左端对齐 */
+}
+
+.auth-page label {
+  margin-bottom: 5px; /* 标签与输入框之间的间距 */
+  font-weight: bold; /* 标签加粗 */
+}
+
+.auth-page input {
+  width: 100%; /* 输入框宽度占满父容器 */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* 包括内边距和边框 */
 }
 
 .error {

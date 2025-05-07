@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public AppResponse<?> register(UserAuthRequest userAuthRequest) throws AppException {
+    public AppResponse<Void> register(UserAuthRequest userAuthRequest) throws AppException {
         User user = toUser(userAuthRequest);
         String lockKey = LOCK_PREFIX + user.getUsername();
         RLock lk = redissonClient.getLock(lockKey);
@@ -136,13 +136,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public AppResponse<?> logout(HttpServletRequest request) throws AppException {
+    public AppResponse<Void> logout(HttpServletRequest request) throws AppException {
         request.getSession().removeAttribute(SESSION_ATTRIBUTE);
         return new AppResponse<>(AppCode.OK, null);
     }
 
     @Override
-    public AppResponse<?> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<Void> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
         toUser(userAuthRequest);
         User user = getById(getLoginUserAuthDTO(request));
         if (!user.getUsername().equals(userAuthRequest.getUsername())) throw new AppException(AppCode.ERR_FORBIDDEN);

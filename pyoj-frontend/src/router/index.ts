@@ -1,24 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../pages/HomePage.vue'
-import AuthPage from '../pages/AuthPage.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage
+    component: () => import('../pages/HomePage.vue')
   },
 
   {
     path: '/auth',
     name: 'Auth',
-    component: AuthPage
+    component: () => import('../pages/AuthPage.vue')
   },
 
   {
     path: '/me',
     name: 'Me',
     component: () => import('../pages/MePage.vue')
+  },
+
+  {
+    path: '/question/:id',
+    name: 'Question',
+    component: () => import('../pages/QuestionPage.vue'),
   }
 ]
 

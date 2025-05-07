@@ -6,6 +6,7 @@ import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.entity.Submit;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,5 +24,5 @@ public interface SubmitService extends IService<Submit> {
      * @return
      * @throws AppException
      */
-    AppResponse<List<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery);
+    AppResponse<PageVO<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery);
 }

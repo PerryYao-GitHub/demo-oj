@@ -14,6 +14,7 @@ import com.ypy.pyojbackend.model.enums.LangEnum;
 import com.ypy.pyojbackend.model.enums.SubmitStatusEnum;
 import com.ypy.pyojbackend.model.query.SubmitPageQuery;
 import com.ypy.pyojbackend.model.request.SubmitRequest;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 import com.ypy.pyojbackend.service.QuestionService;
 import com.ypy.pyojbackend.service.SubmitService;
@@ -100,7 +101,7 @@ public class SubmitServiceImpl
     }
 
     @Override
-    public AppResponse<List<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery) {
+    public AppResponse<PageVO<SubmitVO>> getSubmitVOListByUserIdOrQuestionId(SubmitPageQuery submitPageQuery) {
         Long userId = submitPageQuery.getUserId();
         Long questionId = submitPageQuery.getQuestionId();
 
@@ -121,6 +122,6 @@ public class SubmitServiceImpl
 
         List<Submit> submits = resultPage.getRecords();
         List<SubmitVO> vos = submits.stream().map(this::toSubmitVO).collect(Collectors.toList());
-        return new AppResponse<>(AppCode.OK, vos);
+        return new AppResponse<>(AppCode.OK, new PageVO<>((int)resultPage.getTotal(), pageNum, pageSize, vos));
     }
 }

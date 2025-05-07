@@ -12,6 +12,7 @@ import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.enums.TagEnum;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
 import com.ypy.pyojbackend.service.QuestionService;
@@ -65,7 +66,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<?> createQuestion(QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> createQuestion(QuestionRequest questionRequest) throws AppException {
         Question question = toQuestion(questionRequest);
         if (question.getId() != null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!save(question)) throw new AppException(AppCode.ERR_SYSTEM);
@@ -73,7 +74,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<?> updateQuestion(QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> updateQuestion(QuestionRequest questionRequest) throws AppException {
         Question question = toQuestion(questionRequest);
         if (question.getId() == null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!updateById(question)) throw new AppException(AppCode.ERR_SYSTEM);
@@ -81,7 +82,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<?> deleteQuestion(Long id) throws AppException {
+    public AppResponse<Void> deleteQuestion(Long id) throws AppException {
         if (id == null) throw new AppException(AppCode.ERR_FORBIDDEN);
         if (!removeById(id)) throw new AppException(AppCode.ERR_SYSTEM);
         return new AppResponse<>(AppCode.OK, null);
@@ -96,8 +97,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public AppResponse<List<QuestionBriefVO>> getQuestionBriefVOList(QuestionPageQuery questionPageQuery) {
-        List<QuestionBriefVO> data;
+    public AppResponse<PageVO<QuestionBriefVO>> getQuestionBriefVOPage(QuestionPageQuery questionPageQuery) {
+        PageVO<QuestionBriefVO> data;
         boolean hasTitle = StrUtil.isNotBlank(questionPageQuery.getTitle());
         boolean hasTags = CollUtil.isNotEmpty(questionPageQuery.getTags());
 
@@ -122,15 +123,17 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionBriefVO> getQuestionsNoQuery(QuestionPageQuery questionPageQuery) {
+    private PageVO<QuestionBriefVO> getQuestionsNoQuery(QuestionPageQuery questionPageQuery) {
         int pageSize = questionPageQuery.getPageSize();
         int pageNum = questionPageQuery.getPageNum();
         int start = (pageNum - 1) * pageSize;
         int end = start + pageSize - 1;
 
+        int total = Math.toIntExact(redisTemplate.opsForList().size(QuestionSyncTask.AC_RATE_ASC_LIST_KEY));
+
         List<Object> redisList;
-        if (questionPageQuery.getOrderBy() == QuestionPageQuery.OrderBy.AC_RATE) {
-            if (questionPageQuery.getOrderType() == QuestionPageQuery.OrderType.DESC) {
+        if ("ac_rate".equals(questionPageQuery.getOrderBy())) {
+            if (questionPageQuery.isDesc()) {
                 redisList = redisTemplate.opsForList().range(QuestionSyncTask.AC_RATE_DESC_LIST_KEY, start, end);
             } else {
                 redisList = redisTemplate.opsForList().range(QuestionSyncTask.AC_RATE_ASC_LIST_KEY, start, end);
@@ -139,11 +142,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             redisList = redisTemplate.opsForList().range(QuestionSyncTask.TITLE_ORDER_LIST_KEY, start, end);
         }
 
-        // Object -> QuestionPageVO
-        return redisList.stream()
+        List<QuestionBriefVO> content = redisList.stream()
             .filter(Objects::nonNull)
             .map(obj -> (QuestionBriefVO) obj)
             .collect(Collectors.toList());
+
+        // Object -> QuestionPageVO
+        return new PageVO<>(total, pageNum, pageSize, content);
     }
 
     /**
@@ -151,7 +156,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionBriefVO> getQuestionsByTitle(QuestionPageQuery questionPageQuery) {
+    private PageVO<QuestionBriefVO> getQuestionsByTitle(QuestionPageQuery questionPageQuery) {
         return null;
     }
 
@@ -160,7 +165,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionBriefVO> getQuestionsByTags(QuestionPageQuery questionPageQuery) {
+    private PageVO<QuestionBriefVO> getQuestionsByTags(QuestionPageQuery questionPageQuery) {
         return null;
     }
 
@@ -169,7 +174,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      * @param questionPageQuery
      * @return
      */
-    private List<QuestionBriefVO> getQuestionsByTitleAndTags(QuestionPageQuery questionPageQuery) {
+    private PageVO<QuestionBriefVO> getQuestionsByTitleAndTags(QuestionPageQuery questionPageQuery) {
         return null;
     }
 }

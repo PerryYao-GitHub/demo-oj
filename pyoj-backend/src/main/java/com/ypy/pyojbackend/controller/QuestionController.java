@@ -4,6 +4,7 @@ import com.ypy.pyojbackend.aop.LoginRequired;
 import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.query.QuestionPageQuery;
+import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
 import com.ypy.pyojbackend.service.QuestionService;
@@ -27,8 +28,8 @@ public class QuestionController {
     }
 
     @PostMapping("/list")
-    public AppResponse<List<QuestionBriefVO>> getAllQuestions(@RequestBody QuestionPageQuery questionPageQuery) throws AppException {
-        return questionService.getQuestionBriefVOList(questionPageQuery);
+    public AppResponse<PageVO<QuestionBriefVO>> getAllQuestions(@RequestBody QuestionPageQuery questionPageQuery) throws AppException {
+        return questionService.getQuestionBriefVOPage(questionPageQuery);
     }
 
     @GetMapping("/recommend")

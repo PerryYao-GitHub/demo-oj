@@ -24,23 +24,23 @@ public class AdminController {
     private QuestionService questionService;
 
     @GetMapping("/sync/question")
-    public AppResponse<?> syncQuestion() {
+    public AppResponse<Void> syncQuestion() {
         questionSyncTask.syncAll();
         return new AppResponse<>(AppCode.OK, null);
     }
 
     @PostMapping("/create/question")
-    public AppResponse<?> adminCreateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> adminCreateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
         return questionService.createQuestion(questionRequest);
     }
 
     @PostMapping("/update/question")
-    public AppResponse<?> adminUpdateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> adminUpdateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
         return questionService.updateQuestion(questionRequest);
     }
 
     @DeleteMapping("/delete/question/{id}")
-    public AppResponse<?> adminDeleteQuestion(@PathVariable Long id) throws AppException {
+    public AppResponse<Void> adminDeleteQuestion(@PathVariable Long id) throws AppException {
         return questionService.deleteQuestion(id);
     }
 }

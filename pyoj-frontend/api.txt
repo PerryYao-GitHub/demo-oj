@@ -69,7 +69,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -99,7 +99,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -129,7 +129,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseUserVO"
                 }
               }
             }
@@ -188,7 +188,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseListSubmitVO"
+                  "$ref": "#/components/schemas/AppResponsePageVOSubmitVO"
                 }
               }
             }
@@ -218,7 +218,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseSubmitVO"
                 }
               }
             }
@@ -248,7 +248,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseListQuestionBriefVO"
+                  "$ref": "#/components/schemas/AppResponsePageVOQuestionBriefVO"
                 }
               }
             }
@@ -278,7 +278,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -308,7 +308,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -348,7 +348,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -419,7 +419,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -450,7 +450,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppResponseObject"
+                  "$ref": "#/components/schemas/AppResponseVoid"
                 }
               }
             }
@@ -526,7 +526,7 @@
           }
         }
       },
-      "AppResponseObject": {
+      "AppResponseVoid": {
         "type": "object",
         "properties": {
           "code": {
@@ -552,6 +552,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "desc": {
+            "type": "boolean"
+          },
+          "orderBy": {
+            "type": "string"
+          },
           "userId": {
             "type": "integer",
             "format": "int64"
@@ -562,7 +568,7 @@
           }
         }
       },
-      "AppResponseListSubmitVO": {
+      "AppResponsePageVOSubmitVO": {
         "type": "object",
         "properties": {
           "code": {
@@ -573,10 +579,7 @@
             "type": "string"
           },
           "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubmitVO"
-            }
+            "$ref": "#/components/schemas/PageVOSubmitVO"
           }
         }
       },
@@ -597,6 +600,29 @@
           "time": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "PageVOSubmitVO": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmitVO"
+            }
           }
         }
       },
@@ -659,6 +685,21 @@
           }
         }
       },
+      "AppResponseSubmitVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SubmitVO"
+          }
+        }
+      },
       "QuestionPageQuery": {
         "type": "object",
         "properties": {
@@ -670,6 +711,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "desc": {
+            "type": "boolean"
+          },
+          "orderBy": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
@@ -678,23 +725,10 @@
             "items": {
               "type": "string"
             }
-          },
-          "orderBy": {
-            "type": "string",
-            "enum": [
-              "AC_RATE"
-            ]
-          },
-          "orderType": {
-            "type": "string",
-            "enum": [
-              "ASC",
-              "DESC"
-            ]
           }
         }
       },
-      "AppResponseListQuestionBriefVO": {
+      "AppResponsePageVOQuestionBriefVO": {
         "type": "object",
         "properties": {
           "code": {
@@ -705,6 +739,26 @@
             "type": "string"
           },
           "data": {
+            "$ref": "#/components/schemas/PageVOQuestionBriefVO"
+          }
+        }
+      },
+      "PageVOQuestionBriefVO": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/QuestionBriefVO"
@@ -798,21 +852,6 @@
           }
         }
       },
-      "AppResponseSubmitVO": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/SubmitVO"
-          }
-        }
-      },
       "AppResponseQuestionVO": {
         "type": "object",
         "properties": {
@@ -857,6 +896,24 @@
           },
           "judgeConfig": {
             "$ref": "#/components/schemas/JudgeConfig"
+          }
+        }
+      },
+      "AppResponseListQuestionBriefVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionBriefVO"
+            }
           }
         }
       }
