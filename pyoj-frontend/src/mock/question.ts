@@ -1,6 +1,6 @@
 import type { MockMethod } from 'vite-plugin-mock'
 import type { QuestionPageQuery, QuestionBriefVO, QuestionVO } from '../types/question'
-import type { AppResponse } from '../types/global'
+import type { AppResponse, PageVO } from '../types/global'
 
 const fakeQuestionBriefVOList = [
   {
@@ -105,16 +105,22 @@ export default [
   {
     url: '/api/question/list',
     method: 'post',
-    response: (req: { body: QuestionPageQuery }): AppResponse<QuestionBriefVO[]> => {
+    response: (req: { body: QuestionPageQuery }): AppResponse<PageVO<QuestionBriefVO>> => {
       let pageNum = req.body.pageNum
       let pageSize = req.body.pageSize
       if (pageNum == null || pageNum < 1) pageNum = 1
       if (pageSize == null || pageSize < 1) pageSize = 5
       const showList = fakeQuestionBriefVOList.slice((pageNum - 1) * pageSize, pageNum * pageSize)
+      const pageVo : PageVO<QuestionBriefVO> = {
+        pageNum: pageNum,
+        pageSize: pageSize,
+        total: fakeQuestionBriefVOList.length,
+        content: showList
+      }
       return {
         code: 0,
         message: '查询成功',
-        data: showList
+        data: pageVo
       }
     }
   },

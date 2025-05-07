@@ -1,11 +1,9 @@
+import type { PageQuery } from "./global"
+
 /** 问题分页查询请求体 */
-export interface QuestionPageQuery {
-  pageNum?: number
-  pageSize?: number
+export interface QuestionPageQuery extends PageQuery{
   title?: string
   tags?: string[]
-  orderBy?: 'AC_RATE'
-  orderType?: 'ASC' | 'DESC'
 }
 
 /** 问题简要视图对象 */

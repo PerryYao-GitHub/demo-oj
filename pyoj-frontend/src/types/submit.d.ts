@@ -1,7 +1,7 @@
+import type { PageQuery } from "./global"
+
 /** 提交分页查询请求体 */
-export interface SubmitPageQuery {
-  pageNum?: number
-  pageSize?: number
+export interface SubmitPageQuery extends PageQuery {
   userId?: number
   questionId?: number
 }

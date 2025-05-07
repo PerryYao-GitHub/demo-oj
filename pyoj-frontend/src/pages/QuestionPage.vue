@@ -17,13 +17,7 @@
       <select v-model="selectedLanguage" class="language-selector">
         <option value="java">Java</option>
       </select>
-      <MonacoEditor
-        v-model="code"
-        language="java"
-        theme="vs-dark"
-        class="editor"
-        @change="handleCodeChange"
-      />
+      <MonacoEditor v-model="code" language="java" theme="vs-dark" class="editor" @change="handleCodeChange" />
       <button @click="submitCode" class="submit-button">Submit</button>
     </div>
   </div>
@@ -37,7 +31,7 @@ import axios from 'axios'
 import MonacoEditor from 'monaco-editor-vue3'
 import type { QuestionVO } from '../types/question'
 import type { AppResponse } from '../types/global'
-import type { SubmitRequest } from '../types/submit'
+import type { SubmitRequest, SubmitVO } from '../types/submit'
 
 const route = useRoute()
 const questionId = route.params.id as string
@@ -82,12 +76,18 @@ const submitCode = async () => {
     }
 
     // 发送 POST 请求到 /api/submit/do
-    const response = await axios.post<AppResponse<null>>('/api/submit/do', payload)
+    const response = await axios.post<AppResponse<SubmitVO>>('/api/submit/do', payload)
 
     if (response.data.code === 0) {
       alert('Submission successful! Redirecting to SubmitsPage...')
-      // 重定向到 SubmitsPage: TODO
-      // router.push({ name: 'SubmitsPage' })
+      // 重定向到 SubmitsCheckPage
+      router.push({
+        name: 'SubmitsCheckPage',
+        query: {
+          questionId: question.value.id,
+          userId: response.data.data.userId
+        }
+      })
     } else {
       alert(`Submission failed: ${response.data.message}`)
     }
@@ -107,7 +107,8 @@ onMounted(fetchQuestion)
   display: flex;
   gap: 2rem;
   padding: 2rem;
-  height: 100vh; /* 设置页面高度为视口高度 */
+  height: 100vh;
+  /* 设置页面高度为视口高度 */
   box-sizing: border-box;
 }
 
@@ -117,7 +118,8 @@ onMounted(fetchQuestion)
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #ddd;
-  overflow-y: auto; /* 如果内容过多，允许滚动 */
+  overflow-y: auto;
+  /* 如果内容过多，允许滚动 */
 }
 
 .code-editor {
@@ -125,7 +127,8 @@ onMounted(fetchQuestion)
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  height: 100%; /* 占满父容器高度 */
+  height: 100%;
+  /* 占满父容器高度 */
 }
 
 .language-selector {
@@ -136,7 +139,8 @@ onMounted(fetchQuestion)
 }
 
 .editor {
-  flex: 1; /* 让编辑器占满剩余空间 */
+  flex: 1;
+  /* 让编辑器占满剩余空间 */
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;

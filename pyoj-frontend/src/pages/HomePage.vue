@@ -1,45 +1,10 @@
-<template>
-  <div>
-    <h1>{{ userStore.user?.username || 'Guest' }}, welcome to PYOJ!</h1>
-
-    <!-- 推荐题目 -->
-    <div v-if="userStore.isLogin() && recommendedQuestions.length > 0" class="recommended-section">
-      <h2>Recommended Questions</h2>
-      <QuestionList
-        :questions="recommendedQuestions"
-        @solve="handleSolve"
-        @view-solutions="handleViewSolutions"
-        @my-solutions="handleMySolutions"
-      />
-    </div>
-
-    <!-- 题目列表 -->
-    <div class="question-list-section">
-      <h2>All Questions</h2>
-      <QuestionList
-        :questions="questions"
-        @solve="handleSolve"
-        @view-solutions="handleViewSolutions"
-        @my-solutions="handleMySolutions"
-      />
-      <div class="pagination">
-        <button :disabled="pageNum === 1" @click="changePage(pageNum - 1)">Previous</button>
-        <span>Page {{ pageNum }}</span>
-        <button :disabled="questions.length < pageSize" @click="changePage(pageNum + 1)">Next</button>
-      </div>
-    </div>
-  </div>
-</template>
-
-
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import QuestionList from '../components/QuestionList.vue'
 import { useUserStore } from '../stores/user'
-import type { QuestionBriefVO } from '../types/question'
-import type { AppResponse } from '../types/global'
+import type { QuestionBriefVO, QuestionPageQuery } from '../types/question'
+import type { AppResponse, PageVO } from '../types/global'
 
 const userStore = useUserStore()
 
@@ -50,6 +15,8 @@ const questions = ref<QuestionBriefVO[]>([])
 // 分页状态
 const pageNum = ref(1)
 const pageSize = ref(5)
+const total = ref(0) // 总记录数
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value)) // 总页数
 
 // 获取推荐题目
 const fetchRecommendedQuestions = async () => {
@@ -68,10 +35,16 @@ const fetchRecommendedQuestions = async () => {
 // 获取题目列表
 const fetchQuestions = async () => {
   try {
-    const payload = { pageNum: pageNum.value, pageSize: pageSize.value }
-    const response = await axios.post<AppResponse<QuestionBriefVO[]>>('/api/question/list', payload)
+    const payload: QuestionPageQuery = {
+      pageNum: pageNum.value, 
+      pageSize: pageSize.value,
+      orderBy: 'createTime', // TODO: 增加按照 ac_rate 排序
+      desc: false
+    }
+    const response = await axios.post<AppResponse<PageVO<QuestionBriefVO>>>('/api/question/list', payload)
     if (response.data.code === 0) {
-      questions.value = response.data.data
+      questions.value = response.data.data.content // 更新题目列表
+      total.value = response.data.data.total // 更新总记录数
     } else {
       console.error('Failed to fetch questions:', response.data.message)
     }
@@ -111,7 +84,38 @@ onMounted(() => {
 })
 </script>
 
+<template>
+  <div>
+    <h1>{{ userStore.user?.username || 'Guest' }}, welcome to PYOJ!</h1>
 
+    <!-- 推荐题目 -->
+    <div v-if="userStore.isLogin() && recommendedQuestions.length > 0" class="recommended-section">
+      <h2>Recommended Questions</h2>
+      <QuestionList
+        :questions="recommendedQuestions"
+        @solve="handleSolve"
+        @view-solutions="handleViewSolutions"
+        @my-solutions="handleMySolutions"
+      />
+    </div>
+
+    <!-- 题目列表 -->
+    <div class="question-list-section">
+      <h2>All Questions</h2>
+      <QuestionList
+        :questions="questions"
+        @solve="handleSolve"
+        @view-solutions="handleViewSolutions"
+        @my-solutions="handleMySolutions"
+      />
+      <div class="pagination">
+        <button :disabled="pageNum === 1" @click="changePage(pageNum - 1)">Previous</button>
+        <span>Page {{ pageNum }} of {{ totalPages }}</span>
+        <button :disabled="pageNum === totalPages" @click="changePage(pageNum + 1)">Next</button>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .recommended-section {
