@@ -64,7 +64,7 @@ public class QuestionSyncTask {
                 .collect(Collectors.toList());
         // sort by title
         redisTemplate.delete(TITLE_ORDER_LIST_KEY);
-        redisTemplate.opsForList().rightPushAll(TITLE_ORDER_LIST_KEY, voList);
+        voList.forEach(vo -> {redisTemplate.opsForList().rightPushAll(TITLE_ORDER_LIST_KEY, vo);});
 
         voList.sort(Comparator.comparing(QuestionBriefVO::getAcRate));
         // sort by ac rate asc

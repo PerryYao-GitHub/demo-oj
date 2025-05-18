@@ -4,14 +4,12 @@ import { viteMockServe } from 'vite-plugin-mock'
 import path from 'path'
 
 export default defineConfig(({ command }) => {
-  const isDev = command === 'serve'
-
   return {
     plugins: [
       vue(),
       viteMockServe({
         mockPath: 'src/mock',
-        enable: isDev, 
+        enable: command === 'serve', 
       })
     ],
     resolve: {

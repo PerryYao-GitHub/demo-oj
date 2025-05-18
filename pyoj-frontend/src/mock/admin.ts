@@ -35,5 +35,16 @@ export default [
         data: null
       }
     }
+  },
+  {
+    url: '/api/admin/sync/question',
+    method: 'get',
+    response: (): AppResponse<null> => {
+      return {
+        code: 0,
+        message: '问题同步成功',
+        data: null
+      }
+    }
   }
 ] as MockMethod[]

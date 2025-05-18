@@ -33,7 +33,7 @@
 import { ref } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '../axios'
 import type { AppResponse } from '../types/global'
 import type { UserVO } from '../types/user'
 import type { UserAuthRequest } from '../types/user'
@@ -64,7 +64,7 @@ export default {
         const payload: UserAuthRequest = { username: username.value, password: password.value }
         if (isLoginMode.value) {
           // Login逻辑
-          const response = await axios.post<AppResponse<UserVO>>('/api/user/login', payload)
+          const response = await request.post<AppResponse<UserVO>>('/user/login', payload)
           if (response.data.code === 0) {
             userStore.setUser(response.data.data)
             router.push({ name: 'Home' }) // 登录成功后跳转到首页
@@ -73,7 +73,7 @@ export default {
           }
         } else {
           // Register逻辑
-          const response = await axios.post<AppResponse<UserVO>>('/api/user/register', payload)
+          const response = await request.post<AppResponse<UserVO>>('/user/register', payload)
           if (response.data.code === 0) {
             alert('Register successfully, please login!')
             toggleMode() // 切换回Login模式

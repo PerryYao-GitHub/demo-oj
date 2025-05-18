@@ -22,10 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '../axios'
 import type { AppResponse } from '../types/global'
 import type { UserUpdateRequest } from '../types/user'
 
@@ -39,7 +39,7 @@ const updateTags = async () => {
   if (!user) return
   try {
     const payload: UserUpdateRequest = { tags: tagsInput.value.split(',').map(tag => tag.trim()) }
-    const response = await axios.post<AppResponse<typeof user>>('/api/user/update', payload)
+    const response = await request.post<AppResponse<typeof user>>('/user/update', payload)
     if (response.data.code === 0) {
       alert('Tags updated successfully!')
       await userStore.fetchCurrentUser() // Refresh user data
@@ -55,7 +55,7 @@ const updateTags = async () => {
 // Logout
 const logout = async () => {
   try {
-    await axios.get('/api/user/logout')
+    await request.get('/user/logout')
     userStore.clearUser()
     alert('Logged out successfully!')
     router.push({ name: 'Home' }) // Redirect to home page
@@ -64,6 +64,10 @@ const logout = async () => {
     alert('An error occurred while logging out.')
   }
 }
+
+onMounted(() => {
+  userStore.fetchCurrentUser()
+})
 </script>
 
 <style scoped>

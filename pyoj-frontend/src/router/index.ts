@@ -29,7 +29,19 @@ const routes = [
     path: '/submits',
     name: 'SubmitsCheckPage',
     component: () => import('../pages/SubmitsCheckPage.vue')
-  }
+  },
+
+  {
+    path: '/admin/create/question',
+    name: 'AdminCreateQuestion',
+    component: () => import('../pages/AdminCreateQuestionPage.vue')
+  },
+
+  {
+    path: '/admin/update/question',
+    name: 'AdminUpdateQuestion',
+    component: () => import('../pages/AdminUpdateQuestionPage.vue')
+  },
 ]
 
 const router = createRouter({

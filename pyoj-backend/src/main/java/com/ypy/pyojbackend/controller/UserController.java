@@ -35,7 +35,6 @@ public class UserController {
         return userService.getLoginUserVO(request);
     }
 
-    @LoginRequired
     @GetMapping("/logout")
     public AppResponse<Void> logout(HttpServletRequest request) throws AppException {
         return userService.logout(request);

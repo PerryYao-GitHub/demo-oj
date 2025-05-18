@@ -11,15 +11,42 @@
       <span class="tags">{{ question.tags.join(', ') }}</span>
       <span class="ac-rate">{{ question.acRate }}%</span>
     </div>
+
     <div class="more">
       <div class="dropdown">
         <span class="dots" @click.stop="toggleDropdown(question.id)">⋮</span>
         <div v-if="dropdownVisible === question.id" class="dropdown-menu">
-          <button @click.stop="$emit('view-solutions', question.id)">View Solutions</button>
-          <button @click.stop="$emit('my-solutions', question.id)">My Solutions</button>
+          <button 
+            @click.stop="$emit('view-solutions', question.id)" 
+            class="btn btn-view-solutions"
+          >
+            View Solutions
+          </button>
+          <button 
+            @click.stop="$emit('my-solutions', question.id)" 
+            class="btn btn-my-solutions"
+          >
+            My Solutions
+          </button>
+          
+          <button 
+            v-if="userStore.isAdmin()" 
+            @click.stop="$emit('update-question', question.id)" 
+            class="btn btn-edit"
+          >
+            Update
+          </button>
+          <button 
+            v-if="userStore.isAdmin()" 
+            @click.stop="$emit('delete-question', question.id)" 
+            class="btn btn-delete"
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>
+
     </div>
   </div>
 </template>
@@ -58,11 +85,11 @@ export default defineComponent({
       }
       dropdownVisible.value = dropdownVisible.value === id ? null : id
     }
-
     return {
       navigateToQuestion,
       toggleDropdown,
-      dropdownVisible
+      dropdownVisible,
+      userStore
     }
   }
 })
@@ -80,55 +107,97 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   padding: 0.5em 1em;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #fff;
   cursor: pointer;
   position: relative;
+  transition: background-color 0.2s ease;
 }
 
 .question-item:hover {
-  background-color: #f5f5f5;
+  background-color: #f9f9f9;
 }
 
 .more {
-  display: flex;
-  align-items: center;
+  position: relative;
+  display: inline-block;
 }
 
 .dots {
-  font-size: 1.5em;
   cursor: pointer;
+  font-size: 1.5em;
+  padding: 5px 10px;
+  user-select: none;
+  color: #333;
+  transition: color 0.2s ease;
 }
 
-.dropdown {
-  position: relative;
+.dots:hover {
+  color: #007bff;
 }
 
 .dropdown-menu {
   position: absolute;
+  right: 0;
   top: 100%;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
+  margin-top: 6px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
+  min-width: 160px;
+  padding: 8px 0;
 }
 
-.dropdown-menu button {
+.dropdown-menu .btn {
+  width: 100%;
   background: none;
   border: none;
-  cursor: pointer;
   text-align: left;
-  padding: 0.5em;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.dropdown-menu button:hover {
-  background-color: #f5f5f5;
+.dropdown-menu .btn:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-view-solutions {
+  color: #007bff;
+}
+
+.btn-view-solutions:hover {
+  color: #0056b3;
+}
+
+.btn-my-solutions {
+  color: #28a745;
+}
+
+.btn-my-solutions:hover {
+  color: #1e7e34;
+}
+
+.btn-delete {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.btn-delete:hover {
+  color: #a71d2a;
+}
+
+.btn-edit {
+  color: #ffc107;
+}
+
+.btn-edit:hover {
+  color: #e0a800;
 }
 
 .content {
@@ -141,12 +210,7 @@ export default defineComponent({
 .title {
   flex: 2;
   font-weight: bold;
-}
-
-.dots {
-  font-size: 1.5em;
-  cursor: pointer;
-  user-select: none;
+  color: #333;
 }
 
 .tags {
@@ -157,5 +221,6 @@ export default defineComponent({
 .ac-rate {
   flex: 1;
   text-align: center;
+  color: #333;
 }
 </style>

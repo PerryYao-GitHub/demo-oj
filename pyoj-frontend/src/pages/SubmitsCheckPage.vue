@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import request from '../axios'
 import SubmitList from '../components/SubmitList.vue'
 import type { SubmitPageQuery, SubmitVO } from '../types/submit'
 import type { AppResponse, PageVO } from '../types/global'
@@ -45,7 +45,7 @@ const fetchSubmits = async () => {
       orderBy: 'createTime',
       desc: false
     }
-    const response = await axios.post<AppResponse<PageVO<SubmitVO>>>('/api/submit', payload)
+    const response = await request.post<AppResponse<PageVO<SubmitVO>>>('/submit', payload)
     if (response.data.code === 0) {
       submits.value = response.data.data.content // 更新提交列表
       total.value = response.data.data.total // 更新总记录数

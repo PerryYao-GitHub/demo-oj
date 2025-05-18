@@ -23,6 +23,7 @@ export interface QuestionVO {
   submitCnt: number
   acceptedCnt: number
   judgeConfig: JudgeConfig
+  judgeCase?: JudgeCase
 }
 
 /** 问题请求体 */

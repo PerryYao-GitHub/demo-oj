@@ -27,7 +27,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '../axios'
 import MonacoEditor from 'monaco-editor-vue3'
 import type { QuestionVO } from '../types/question'
 import type { AppResponse } from '../types/global'
@@ -49,7 +49,7 @@ const handleCodeChange = (newCode: string) => {
 // Fetch question details
 const fetchQuestion = async () => {
   try {
-    const response = await axios.get<AppResponse<QuestionVO>>(`/api/question/${questionId}`)
+    const response = await request.get<AppResponse<QuestionVO>>(`/question/${questionId}`)
     if (response.data.code === 0) {
       question.value = response.data.data
     } else {
@@ -76,7 +76,7 @@ const submitCode = async () => {
     }
 
     // 发送 POST 请求到 /api/submit/do
-    const response = await axios.post<AppResponse<SubmitVO>>('/api/submit/do', payload)
+    const response = await request.post<AppResponse<SubmitVO>>('/submit/do', payload)
 
     if (response.data.code === 0) {
       alert('Submission successful! Redirecting to SubmitsPage...')

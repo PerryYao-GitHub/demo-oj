@@ -2,6 +2,9 @@
   <nav class="navbar">
     <ul class="left">
       <li><router-link to="/">Home</router-link></li>
+      <li v-if="userStore.isAdmin()">
+        <router-link to="/admin/create/question">Create Question</router-link>
+      </li>
     </ul>
 
     <ul class="right">

@@ -2,7 +2,7 @@ import type { MockMethod } from 'vite-plugin-mock'
 import type { SubmitPageQuery, SubmitVO, SubmitRequest } from '../types/submit'
 import type { AppResponse, PageVO } from '../types/global'
 
-const fakeSubmitVOList = [
+const fakeSubmitVOList: SubmitVO[] = [
   {
     id: 33,
     userId: 2,
@@ -102,6 +102,7 @@ export default [
       }
     }
   },
+
   {
     url: '/api/submit',
     method: 'post',
@@ -119,6 +120,7 @@ export default [
       }
     }
   },
+  
   {
     url: '/api/submit/do',
     method: 'post',
