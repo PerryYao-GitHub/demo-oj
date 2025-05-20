@@ -4,7 +4,7 @@ import com.ypy.pyojbackend.mapper.QuestionMapper;
 import com.ypy.pyojbackend.model.entity.Question;
 import com.ypy.pyojbackend.model.vo.QuestionBriefVO;
 import com.ypy.pyojbackend.model.vo.QuestionVO;
-import com.ypy.pyojbackend.service.QuestionService;
+import com.ypy.pyojbackend.uitls.QuestionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -31,9 +31,6 @@ public class QuestionSyncTask {
     public static final String AC_RATE_DESC_LIST_KEY = "pyoj:job:question-sync-task:ac-rate-desc-list";
 
     @Resource
-    QuestionService questionService;
-
-    @Resource
     private QuestionMapper questionMapper;
 
     @Resource
@@ -45,7 +42,7 @@ public class QuestionSyncTask {
 
         List<Question> questions = questionMapper.selectList(null);
         questions.forEach((question) -> {
-            QuestionVO qvo = questionService.toQuestionVO(question);
+            QuestionVO qvo = QuestionUtils.toVO(question);
             String key = DETAIL_PREFIX + qvo.getId();
             redisTemplate.opsForValue().set(key, qvo, 25, TimeUnit.HOURS);
         });
@@ -59,7 +56,7 @@ public class QuestionSyncTask {
 
         List<Question> questions = questionMapper.selectList(null);
         List<QuestionBriefVO> voList = questions.stream()
-                .map(q -> questionService.toQuestionBriefVO(q))
+                .map(QuestionUtils::toBriefVO)
                 .sorted(Comparator.comparing(QuestionBriefVO::getTitle))
                 .collect(Collectors.toList());
         // sort by title

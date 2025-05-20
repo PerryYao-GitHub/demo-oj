@@ -1,6 +1,6 @@
 package com.ypy.pyojbackend.judge.strategy;
 
-import com.ypy.pyojbackend.codesandbox.model.CodeSandboxResponse;
+import com.ypy.pyojbackend.judge.codesandbox.model.CodeSandboxResponse;
 import com.ypy.pyojbackend.judge.model.JudgeCase;
 import com.ypy.pyojbackend.judge.model.JudgeConfig;
 import lombok.Builder;

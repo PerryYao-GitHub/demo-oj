@@ -1,8 +1,10 @@
 package com.ypy.pyojbackend.codesandbox;
 
-import com.ypy.pyojbackend.codesandbox.impl.PyCodeSandbox;
-import com.ypy.pyojbackend.codesandbox.model.CodeSandboxRequest;
-import com.ypy.pyojbackend.codesandbox.model.CodeSandboxResponse;
+import com.ypy.pyojbackend.judge.codesandbox.CodeSandbox;
+import com.ypy.pyojbackend.judge.codesandbox.CodeSandboxFactory;
+import com.ypy.pyojbackend.judge.codesandbox.impl.PyCodeSandbox;
+import com.ypy.pyojbackend.judge.codesandbox.model.CodeSandboxRequest;
+import com.ypy.pyojbackend.judge.codesandbox.model.CodeSandboxResponse;
 import com.ypy.pyojbackend.exception.AppException;
 import com.ypy.pyojbackend.model.enums.LangEnum;
 import org.junit.jupiter.api.Test;

@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
 
     @Resource
+    private QuestionSyncTask questionSyncTask;
+
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     private Question toQuestion(QuestionRequest questionRequest) {
@@ -43,26 +46,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     }
 
     @Override
-    public QuestionVO toQuestionVO(Question question) {
-        QuestionVO vo = new QuestionVO();
-        vo.setId(question.getId());
-        vo.setTitle(question.getTitle());
-        vo.setDescription(question.getDescription());
-        vo.setTags(question.getTags().stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
-        vo.setSubmitCnt(question.getSubmitCnt());
-        vo.setAcceptedCnt(question.getAcceptedCnt());
-        vo.setJudgeConfig(question.getJudgeConfig());
-        return vo;
-    }
-
-    @Override
-    public QuestionBriefVO toQuestionBriefVO(Question question) {
-        QuestionBriefVO vo = new QuestionBriefVO();
-        vo.setId(question.getId());
-        vo.setTitle(question.getTitle());
-        vo.setTags(question.getTags().stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
-        vo.setAcRate(question.getSubmitCnt().equals(0) ? 0f : (float) question.getAcceptedCnt() / question.getSubmitCnt());
-        return vo;
+    public AppResponse<Void> syncQuestion() {
+        questionSyncTask.syncAll();
+        return new AppResponse<>(AppCode.OK, null);
     }
 
     @Override

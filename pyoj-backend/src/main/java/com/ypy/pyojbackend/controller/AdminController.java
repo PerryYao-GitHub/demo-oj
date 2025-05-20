@@ -1,10 +1,8 @@
 package com.ypy.pyojbackend.controller;
 
 import com.ypy.pyojbackend.aop.AuthCheck;
-import com.ypy.pyojbackend.app.AppCode;
 import com.ypy.pyojbackend.app.AppResponse;
 import com.ypy.pyojbackend.exception.AppException;
-import com.ypy.pyojbackend.job.QuestionSyncTask;
 import com.ypy.pyojbackend.model.enums.UserRoleEnum;
 import com.ypy.pyojbackend.model.request.QuestionRequest;
 import com.ypy.pyojbackend.service.QuestionService;
@@ -18,15 +16,11 @@ import javax.annotation.Resource;
 public class AdminController {
 
     @Resource
-    private QuestionSyncTask questionSyncTask;
-
-    @Resource
     private QuestionService questionService;
 
     @GetMapping("/sync/question")
     public AppResponse<Void> syncQuestion() {
-        questionSyncTask.syncAll();
-        return new AppResponse<>(AppCode.OK, null);
+        return questionService.syncQuestion();
     }
 
     @PostMapping("/create/question")

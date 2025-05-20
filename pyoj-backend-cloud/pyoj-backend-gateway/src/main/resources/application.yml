@@ -1,0 +1,41 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /api/gateway
+
+spring:
+  application:
+    name: pyoj-backend-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: pyoj-backend-user-service
+          uri: lb://pyoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: pyoj-backend-question-service
+          uri: lb://pyoj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+        - id: pyoj-backend-submit-service
+          uri: lb://pyoj-backend-submit-service
+          predicates:
+            - Path=/api/submit/**
+
+  # default dev env
+  profiles:
+    active: dev
+
+  # for swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

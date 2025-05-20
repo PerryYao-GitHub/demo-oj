@@ -12,9 +12,7 @@ import com.ypy.pyojbackend.model.vo.QuestionVO;
 
 public interface QuestionService extends IService<Question> {
 
-    QuestionVO toQuestionVO(Question question);
-
-    QuestionBriefVO toQuestionBriefVO(Question question);
+    AppResponse<Void> syncQuestion();
 
     AppResponse<Void> createQuestion(QuestionRequest questionRequest) throws AppException;
 
