@@ -1,0 +1,5 @@
+- pyoj-backend-gateway: 8080
+- pyoj-backend-user-service: 8081
+- pyoj-backend-question-service: 8082
+- pyoj-backend-submit-service: 8083
+- pyoj-backend-judge-service: 8084

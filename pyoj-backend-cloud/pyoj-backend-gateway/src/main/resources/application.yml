@@ -1,11 +1,12 @@
 server:
-  port: 8084
+  port: 8080
   servlet:
     context-path: /api/gateway
 
 spring:
   application:
     name: pyoj-backend-gateway
+
   cloud:
     nacos:
       discovery:

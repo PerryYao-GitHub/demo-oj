@@ -1,11 +1,12 @@
 server:
-  port: 8084
+  port: 8081
   servlet:
     context-path: /api/user
 
 spring:
   application:
     name: pyoj-backend-user-service
+
   cloud:
     nacos:
       discovery:
@@ -46,7 +47,3 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-
-
-#codesandbox:
-#  type: py # fake or py
