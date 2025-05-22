@@ -103,13 +103,11 @@
             </dependency>
 
             <!-- Knife4j -->
-<!--            <dependency>-->
-<!--                <groupId>com.github.xiaoymin</groupId>-->
-<!--                <artifactId>knife4j-dependencies</artifactId>-->
-<!--                <version>3.0.3</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+                <version>4.3.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

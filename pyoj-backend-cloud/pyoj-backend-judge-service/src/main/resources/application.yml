@@ -16,12 +16,10 @@ spring:
      exclude: # drop database drive
        - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
-  # default dev env
-  profiles:
+  profiles: # default dev env
     active: dev
 
-  # for swagger3
-  mvc:
+  mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
 
@@ -31,8 +29,8 @@ springdoc:
   swagger-ui:
     enabled: true
 
+knife4j:
+  enable: true
 
 codesandbox:
   type: py # fake or py
-
-

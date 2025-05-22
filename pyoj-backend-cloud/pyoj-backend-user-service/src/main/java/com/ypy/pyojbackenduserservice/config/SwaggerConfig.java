@@ -1,4 +1,4 @@
-package com.ypy.pyojbackendcommon.config;
+package com.ypy.pyojbackenduserservice.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -26,7 +26,7 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         return new OpenAPI()
-                .info(new Info().title("PYOJ 后台接口文档").version("v1.0"))
+                .info(new Info().title("PYOJ Backend User Service API").version("v1.0"))
                 .components(new Components()
                         .addSecuritySchemes("cookieAuth", cookieScheme)
                         .addSecuritySchemes("bearerAuth", bearerScheme))

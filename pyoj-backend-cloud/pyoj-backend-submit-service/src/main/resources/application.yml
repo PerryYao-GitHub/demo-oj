@@ -11,12 +11,10 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 
-  # default dev env
-  profiles:
+  profiles: # default dev env
     active: dev
 
-  # for swagger3
-  mvc:
+  mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
 
@@ -46,7 +44,5 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-
-
-#codesandbox:
-#  type: py # fake or py
+knife4j:
+  enable: true

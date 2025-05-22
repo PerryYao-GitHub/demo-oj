@@ -26,17 +26,16 @@ spring:
           predicates:
             - Path=/api/submit/**
 
-  # default dev env
-  profiles:
+  profiles: # default dev env
     active: dev
 
-  # for swagger3
-  mvc:
+  mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
 
-springdoc:
-  api-docs:
+knife4j:
+  gateway:
     enabled: true
-  swagger-ui:
-    enabled: true
+    discover:
+      enabled: true
+      version: openapi3
