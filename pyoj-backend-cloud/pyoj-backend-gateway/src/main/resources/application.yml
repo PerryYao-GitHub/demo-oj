@@ -2,11 +2,9 @@ server:
   port: 8080
   servlet:
     context-path: /api/gateway
-
 spring:
   application:
     name: pyoj-backend-gateway
-
   cloud:
     nacos:
       discovery:
@@ -25,17 +23,14 @@ spring:
           uri: lb://pyoj-backend-submit-service
           predicates:
             - Path=/api/submit/**
-
   profiles: # default dev env
     active: dev
-
   mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
-
 knife4j:
   gateway:
     enabled: true
     discover:
       enabled: true
-      version: openapi3
+      version: swagger2

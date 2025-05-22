@@ -13,24 +13,30 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/submit")
 public class SubmitController {
 
     @Resource
     private SubmitService submitService;
 
     @PostMapping("/do")
-    public AppResponse<SubmitVO> submit(@RequestBody SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<SubmitVO> submit(
+            @RequestBody SubmitRequest submitRequest,
+            HttpServletRequest request
+    ) throws AppException {
         return submitService.doSubmit(submitRequest, request);
     }
 
-    @GetMapping("")
-    public AppResponse<SubmitVO> getSubmitById(@RequestParam("id") Long id) throws AppException {
+    @GetMapping
+    public AppResponse<SubmitVO> getSubmitById(
+            @RequestParam("id") Long id
+    ) throws AppException {
         return submitService.getSubmitVOById(id);
     }
 
-    @PostMapping("")
-    public AppResponse<PageVO<SubmitVO>> getSubmitList(@RequestBody SubmitPageQuery submitPageQuery) throws AppException {
+    @PostMapping
+    public AppResponse<PageVO<SubmitVO>> getSubmitList(
+            @RequestBody SubmitPageQuery submitPageQuery
+    ) throws AppException {
         return submitService.getSubmitVOListByUserIdOrQuestionId(submitPageQuery);
     }
 }

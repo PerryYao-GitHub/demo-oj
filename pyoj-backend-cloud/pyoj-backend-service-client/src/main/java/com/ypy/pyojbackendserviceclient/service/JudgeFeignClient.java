@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface JudgeFeignClient {
 
     @GetMapping("/do")
-    void doJudge(@RequestParam("submitId") long submitId) throws AppException;
+    void doJudge(@RequestParam("submitId") Long submitId) throws AppException;
 }

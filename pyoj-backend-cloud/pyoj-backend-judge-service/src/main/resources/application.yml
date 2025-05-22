@@ -2,35 +2,27 @@ server:
   port: 8084
   servlet:
     context-path: /api/judge
-
 spring:
   application:
     name: pyoj-backend-judge-service
-
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-
   autoconfigure:
      exclude: # drop database drive
        - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
   profiles: # default dev env
     active: dev
-
   mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
-
 springdoc:
   api-docs:
     enabled: true
   swagger-ui:
     enabled: true
-
 knife4j:
   enable: true
-
 codesandbox:
   type: py # fake or py

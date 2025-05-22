@@ -5,6 +5,7 @@ import com.ypy.pyojbackendjudgeservice.service.JudgeService;
 import com.ypy.pyojbackendserviceclient.service.JudgeFeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -17,7 +18,9 @@ public class JudgeInnerController implements JudgeFeignClient {
 
     @Override
     @GetMapping("/do")
-    public void doJudge(long submitId) throws AppException {
+    public void doJudge(
+            @RequestParam("submitId") Long submitId
+    ) throws AppException {
         judgeService.doJudge(submitId);
     }
 }

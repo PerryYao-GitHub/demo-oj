@@ -15,44 +15,55 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
 public class QuestionController {
 
     @Resource
     private QuestionService questionService;
 
     @GetMapping("/admin/sync")
-    public AppResponse<Void> syncQuestion() {
+    public AppResponse<Void> adminSyncQuestion() {
         return questionService.syncQuestion();
     }
 
     @PostMapping("/admin/create")
-    public AppResponse<Void> adminCreateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> adminCreateQuestion(
+            @RequestBody QuestionRequest questionRequest
+    ) throws AppException {
         return questionService.createQuestion(questionRequest);
     }
 
     @PostMapping("/admin/update")
-    public AppResponse<Void> adminUpdateQuestion(@RequestBody QuestionRequest questionRequest) throws AppException {
+    public AppResponse<Void> adminUpdateQuestion(
+            @RequestBody QuestionRequest questionRequest
+    ) throws AppException {
         return questionService.updateQuestion(questionRequest);
     }
 
     @DeleteMapping("/admin/delete/{id}")
-    public AppResponse<Void> adminDeleteQuestion(@PathVariable Long id) throws AppException {
+    public AppResponse<Void> adminDeleteQuestion(
+            @PathVariable Long id
+    ) throws AppException {
         return questionService.deleteQuestion(id);
     }
 
     @GetMapping("/{id}")
-    public AppResponse<QuestionVO> getOneQuestion(@PathVariable long id) throws AppException {
+    public AppResponse<QuestionVO> getOneQuestion(
+            @PathVariable Long id
+    ) throws AppException {
         return questionService.getQuestionVOById(id);
     }
 
-    @PostMapping("/list")
-    public AppResponse<PageVO<QuestionBriefVO>> getAllQuestions(@RequestBody QuestionPageQuery questionPageQuery) throws AppException {
+    @PostMapping("/page")
+    public AppResponse<PageVO<QuestionBriefVO>> getQuestionPage(
+            @RequestBody QuestionPageQuery questionPageQuery
+    ) {
         return questionService.getQuestionBriefVOPage(questionPageQuery);
     }
 
     @GetMapping("/recommend")
-    public AppResponse<List<QuestionBriefVO>> getRecommend(HttpServletRequest request) {
+    public AppResponse<List<QuestionBriefVO>> getRecommend(
+            HttpServletRequest request
+    ) {
         return null;
     }
 }

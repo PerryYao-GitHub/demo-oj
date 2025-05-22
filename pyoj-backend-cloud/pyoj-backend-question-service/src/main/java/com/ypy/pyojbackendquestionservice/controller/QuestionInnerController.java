@@ -3,10 +3,7 @@ package com.ypy.pyojbackendquestionservice.controller;
 import com.ypy.pyojbackendcommon.model.entity.Question;
 import com.ypy.pyojbackendquestionservice.service.QuestionService;
 import com.ypy.pyojbackendserviceclient.service.QuestionFeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -19,13 +16,17 @@ public class QuestionInnerController implements QuestionFeignClient {
 
     @Override
     @GetMapping("/get/by/id")
-    public Question getById(Long id) {
+    public Question getById(
+            @RequestParam("id") Long id
+    ) {
         return questionService.getById(id);
     }
 
     @Override
     @PostMapping("/update/by/id")
-    public boolean updateById(Question question) {
+    public boolean updateById(
+            @RequestBody Question question
+    ) {
         return questionService.updateById(question);
     }
 }

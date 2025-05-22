@@ -5,6 +5,7 @@ import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackenduserservice.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -18,7 +19,9 @@ public class UserInnerController implements UserFeignClient {
 
     @Override
     @GetMapping("/get/by/id")
-    public User getById(Long id) {
+    public User getById(
+            @RequestParam Long id
+    ) {
         return userService.getById(id);
     }
 }
