@@ -1,7 +1,7 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api/gateway
+#  servlet:
+#    context-path: /api/gateway
 spring:
   application:
     name: pyoj-backend-gateway
@@ -28,9 +28,24 @@ spring:
   mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
+#knife4j:
+#  gateway:
+#    enabled: true
+#    strategy: discover
+#    discover:
+#      enabled: true
+#      version: swagger2
 knife4j:
   gateway:
     enabled: true
-    discover:
-      enabled: true
-      version: swagger2
+    strategy: manual  #手动模式
+    routes:
+      - name: PYOJ Backend User Service
+        service-name: pyoj-backend-user-service
+        url: /api/user/v3/api-docs
+      - name: PYOJ Backend Question Service
+        service-name: pyoj-backend-question-service
+        url: /api/question/v3/api-docs
+      - name: PYOJ Backend Submit Service
+        service-name: pyoj-backend-submit-service
+        url: /api/submit/v3/api-docs
