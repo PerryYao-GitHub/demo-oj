@@ -17,7 +17,7 @@ import java.util.List;
 
 @LoginRequired
 @RestController
-@RequestMapping("/api/submit")
+@RequestMapping("/submit")
 public class SubmitController {
 
     @Resource

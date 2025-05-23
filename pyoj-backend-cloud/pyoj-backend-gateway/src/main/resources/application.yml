@@ -43,9 +43,12 @@ knife4j:
       - name: PYOJ Backend User Service
         service-name: pyoj-backend-user-service
         url: /api/user/v3/api-docs
+        context-path: /api/user
       - name: PYOJ Backend Question Service
         service-name: pyoj-backend-question-service
         url: /api/question/v3/api-docs
+        context-path: /api/question
       - name: PYOJ Backend Submit Service
         service-name: pyoj-backend-submit-service
         url: /api/submit/v3/api-docs
+        context-path: /api/submit
