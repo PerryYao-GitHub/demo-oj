@@ -6,6 +6,7 @@ import com.ypy.pyojbackendcommon.model.query.SubmitPageQuery;
 import com.ypy.pyojbackendcommon.model.request.SubmitRequest;
 import com.ypy.pyojbackendcommon.model.vo.PageVO;
 import com.ypy.pyojbackendcommon.model.vo.SubmitVO;
+import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackendsubmitservice.service.SubmitService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +19,16 @@ public class SubmitController {
     @Resource
     private SubmitService submitService;
 
+    @Resource
+    private UserFeignClient userFeignClient;
+
     @PostMapping("/do")
-    public AppResponse<SubmitVO> submit(
+    public AppResponse<SubmitVO> doSubmit(
             @RequestBody SubmitRequest submitRequest,
             HttpServletRequest request
     ) throws AppException {
-        return submitService.doSubmit(submitRequest, request);
+        submitRequest.setUserId(userFeignClient.getLoginUserAuthDTO(request).getId());
+        return submitService.doSubmit(submitRequest);
     }
 
     @GetMapping

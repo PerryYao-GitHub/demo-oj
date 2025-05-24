@@ -26,7 +26,7 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         return new OpenAPI()
-                .info(new Info().title("PYOJ 后台接口文档").version("v1.0"))
+                .info(new Info().title("PYOJ Backend API").version("v1.0"))
                 .components(new Components()
                         .addSecuritySchemes("cookieAuth", cookieScheme)
                         .addSecuritySchemes("bearerAuth", bearerScheme))

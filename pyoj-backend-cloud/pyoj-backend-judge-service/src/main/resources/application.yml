@@ -12,6 +12,11 @@ spring:
   autoconfigure:
      exclude: # drop database drive
        - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    timeout: 5000
   profiles: # default dev env
     active: dev
   mvc: # for swagger3

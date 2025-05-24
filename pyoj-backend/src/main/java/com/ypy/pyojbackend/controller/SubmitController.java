@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @LoginRequired
 @RestController
@@ -23,9 +22,13 @@ public class SubmitController {
     @Resource
     private SubmitService submitService;
 
+    @Resource
+    UserService userService;
+
     @PostMapping("/do")
-    public AppResponse<SubmitVO> submit(@RequestBody SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
-        return submitService.doSubmit(submitRequest, request);
+    public AppResponse<SubmitVO> doSubmit(@RequestBody SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+        submitRequest.setUserId(userService.getLoginUserAuthDTO(request).getId());
+        return submitService.doSubmit(submitRequest);
     }
 
     @GetMapping("")

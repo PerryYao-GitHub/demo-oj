@@ -1,5 +1,6 @@
 package com.ypy.pyojbackendsubmitservice.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,7 +23,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -42,9 +42,9 @@ public class SubmitServiceImpl
     @Lazy
     private JudgeFeignClient judgeService;
 
-    private Submit toSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+    private Submit toSubmit(SubmitRequest submitRequest) {
         Submit submit = new Submit();
-        submit.setUserId(userFeignClient.getLoginUserAuthDTO(request).getId());
+        submit.setUserId(submitRequest.getUserId());
         submit.setQuestionId(submitRequest.getQuestionId());
         submit.setLang(LangEnum.text2value.get(submitRequest.getLang()));
         submit.setCode(submitRequest.getCode());
@@ -61,31 +61,8 @@ public class SubmitServiceImpl
         vo.setUsername(userFeignClient.getById(submit.getUserId()).getUsername());
 
         vo.setQuestionId(submit.getQuestionId());
-        vo.setQuestionTitle(questionTitle);
-
-        vo.setStatus(SubmitStatusEnum.value2text.get(submit.getStatus()));
-
-        vo.setLang(LangEnum.value2text.get(submit.getLang()));
-
-        vo.setCode(submit.getCode());
-
-        vo.setJudgeResult(submit.getJudgeResult());
-
-        vo.setCreateTime(submit.getCreateTime());
-
-        return vo;
-    }
-
-    private SubmitVO toSubmitVO(Submit submit) {
-        SubmitVO vo = new SubmitVO();
-
-        vo.setId(submit.getId());
-
-        vo.setUserId(submit.getUserId());
-        vo.setUsername(userFeignClient.getById(submit.getUserId()).getUsername());
-
-        vo.setQuestionId(submit.getQuestionId());
-        vo.setQuestionTitle(questionFeignClient.getById(submit.getQuestionId()).getTitle());
+        if (StrUtil.isNotBlank(questionTitle)) vo.setQuestionTitle(questionTitle);
+        else vo.setQuestionTitle(questionFeignClient.getById(submit.getQuestionId()).getTitle());
 
         vo.setStatus(SubmitStatusEnum.value2text.get(submit.getStatus()));
 
@@ -101,8 +78,8 @@ public class SubmitServiceImpl
     }
 
     @Override
-    public AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
-        Submit submit = toSubmit(submitRequest, request);
+    public AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest) throws AppException {
+        Submit submit = toSubmit(submitRequest);
         Question question = questionFeignClient.getById(submit.getQuestionId());
         if (question == null) throw new AppException(AppCode.ERR_NOT_FOUND);
         if (!save(submit)) throw new AppException(AppCode.ERR_SYSTEM);
@@ -120,7 +97,7 @@ public class SubmitServiceImpl
 
     @Override
     public AppResponse<SubmitVO> getSubmitVOById(Long id) {
-        return new AppResponse<>(AppCode.OK, toSubmitVO(getById(id)));
+        return new AppResponse<>(AppCode.OK, toSubmitVO(getById(id), null));
     }
 
     @Override
@@ -144,7 +121,7 @@ public class SubmitServiceImpl
         Page<Submit> resultPage = this.page(pg, qw);
 
         List<Submit> submits = resultPage.getRecords();
-        List<SubmitVO> vos = submits.stream().map(this::toSubmitVO).collect(Collectors.toList());
+        List<SubmitVO> vos = submits.stream().map(s -> toSubmitVO(s, null)).collect(Collectors.toList());
         return new AppResponse<>(AppCode.OK, new PageVO<>((int) resultPage.getTotal(), pageNum, pageSize, vos));
     }
 }

@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class SubmitRequest {
 
+    private Long userId;
+
     @NotBlank
     private Long questionId;
 

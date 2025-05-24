@@ -9,12 +9,9 @@ import com.ypy.pyojbackend.model.request.SubmitRequest;
 import com.ypy.pyojbackend.model.vo.PageVO;
 import com.ypy.pyojbackend.model.vo.SubmitVO;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 public interface SubmitService extends IService<Submit> {
 
-    AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException;
+    AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest) throws AppException;
 
     AppResponse<SubmitVO> getSubmitVOById(Long id);
 

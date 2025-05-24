@@ -15,7 +15,7 @@ public interface UserFeignClient {
     @GetMapping("/get/by/id")
     User getById(@RequestParam("id") Long id);
 
-    default UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) throws AppException {
-        return (UserAuthDTO) request.getSession().getAttribute("loginUser"); // todo: not safe, use JWT
+    default UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) {
+        return (UserAuthDTO) request.getSession().getAttribute("loginUser");
     }
 }

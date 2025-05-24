@@ -22,13 +22,15 @@ import java.util.stream.Collectors;
 @Component
 public class QuestionSyncTask {
 
-    public static final String DETAIL_PREFIX = "pyoj:job:question-sync-task:detail:";
+    public static final String PREFIX = "pyoj:job:question-sync-task:";
 
-    public static final String TITLE_ORDER_LIST_KEY = "pyoj:job:question-sync-task:title-order-list";
+    public static final String DETAIL_PREFIX = PREFIX + "detail:";
 
-    public static final String AC_RATE_ASC_LIST_KEY = "pyoj:job:question-sync-task:ac-rate-asc-list";
+    public static final String TITLE_ORDER_LIST_KEY = PREFIX + "title-order-list";
 
-    public static final String AC_RATE_DESC_LIST_KEY = "pyoj:job:question-sync-task:ac-rate-desc-list";
+    public static final String AC_RATE_ASC_LIST_KEY = PREFIX + "ac-rate-asc-list";
+
+    public static final String AC_RATE_DESC_LIST_KEY = PREFIX + "ac-rate-desc-list";
 
     @Resource
     private QuestionMapper questionMapper;

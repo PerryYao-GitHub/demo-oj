@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface SubmitService extends IService<Submit> {
 
-    AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException;
+    AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest) throws AppException;
 
     AppResponse<SubmitVO> getSubmitVOById(Long id);
 

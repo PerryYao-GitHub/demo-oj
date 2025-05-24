@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -43,9 +42,9 @@ public class SubmitServiceImpl
     @Lazy
     private JudgeService judgeService;
 
-    private Submit toSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
+    private Submit toSubmit(SubmitRequest submitRequest) {
         Submit submit = new Submit();
-        submit.setUserId(userService.getLoginUserAuthDTO(request).getId());
+        submit.setUserId(submitRequest.getUserId());
         submit.setQuestionId(submitRequest.getQuestionId());
         submit.setLang(LangEnum.text2value.get(submitRequest.getLang()));
         submit.setCode(submitRequest.getCode());
@@ -78,8 +77,8 @@ public class SubmitServiceImpl
     }
 
     @Override
-    public AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest, HttpServletRequest request) throws AppException {
-        Submit submit = toSubmit(submitRequest, request);
+    public AppResponse<SubmitVO> doSubmit(SubmitRequest submitRequest) throws AppException {
+        Submit submit = toSubmit(submitRequest);
         Question question = questionService.getById(submit.getQuestionId());
         if (question == null) throw new AppException(AppCode.ERR_NOT_FOUND);
         if (!save(submit)) throw new AppException(AppCode.ERR_SYSTEM);
