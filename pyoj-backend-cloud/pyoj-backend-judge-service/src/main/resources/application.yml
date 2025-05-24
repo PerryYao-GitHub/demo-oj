@@ -22,12 +22,12 @@ spring:
   mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-knife4j:
-  enable: true
+#springdoc:
+#  api-docs:
+#    enabled: true
+#  swagger-ui:
+#    enabled: true
+#knife4j:
+#  enable: true
 codesandbox:
   type: py # fake or py

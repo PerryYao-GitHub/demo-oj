@@ -43,7 +43,7 @@ public interface UserService extends IService<User> {
      * @return
      * @throws AppException
      */
-    AppResponse<UserVO> login(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException;
+    AppResponse<String> login(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException;
 
     AppResponse<UserVO> getLoginUserVO(HttpServletRequest request) throws AppException;
 

@@ -13,6 +13,8 @@ import com.ypy.pyojbackendcommon.model.enums.UserRoleEnum;
 import com.ypy.pyojbackendcommon.model.request.UserAuthRequest;
 import com.ypy.pyojbackendcommon.model.request.UserUpdateRequest;
 import com.ypy.pyojbackendcommon.model.vo.UserVO;
+import com.ypy.pyojbackendcommon.utils.JwtUtils;
+import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackenduserservice.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -40,6 +42,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private RedissonClient redissonClient; // for redis distributed lock
 
+    @Resource
+    private UserFeignClient userFeignClient;
+
     private UserVO toUserVO(User user) {
         UserVO vo = new UserVO();
         vo.setId(user.getId());
@@ -48,13 +53,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<Integer> tags = user.getTags() == null ? Collections.emptyList() : user.getTags();
         vo.setTags(tags.stream().map(TagEnum.value2text::get).collect(Collectors.toList()));
         return vo;
-    }
-
-    private UserAuthDTO toUserAuthDTO(User user) {
-        UserAuthDTO dto = new UserAuthDTO();
-        dto.setId(user.getId());
-        dto.setRole(user.getRole());
-        return dto;
     }
 
     private User toUser(UserAuthRequest userAuthRequest) throws AppException {
@@ -75,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) throws AppException {
-        return (UserAuthDTO) request.getSession().getAttribute(SESSION_ATTRIBUTE);
+        return userFeignClient.getLoginUserAuthDTO(request);
     }
 
     @Override
@@ -111,7 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public AppResponse<UserVO> login(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
+    public AppResponse<String> login(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
         toUser(userAuthRequest); // valid user
 
         String encryptedPassword = DigestUtil.md5Hex(SALT + userAuthRequest.getPassword());
@@ -121,12 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = baseMapper.selectOne(qw);
         if (user == null) throw new AppException(AppCode.ERR_WRONG_USR_PWD);
 
-        // session login
-        UserAuthDTO dto = toUserAuthDTO(user);
-        request.getSession().setAttribute(SESSION_ATTRIBUTE, dto);
-
-        return new AppResponse<>(AppCode.OK, toUserVO(user));
-        // vo.setToken(TokenUtil.gen(...)); // use jwt token
+        return new AppResponse<>(AppCode.OK, JwtUtils.generateToken(new UserAuthDTO(user.getId(), user.getRole())));
     }
 
     @Override

@@ -1,0 +1,38 @@
+### login: 获取 token 并存入变量 {{token}}
+POST {{baseUrl}}/user/login
+Content-Type: application/json
+
+{
+  "username": "admin-ypy",
+  "password": "123456",
+  "oldPassword": ""
+}
+
+> {%
+  const json = JSON.parse(response.body);
+  if (json.code === 0) {
+    client.global.set("token", json.data);
+  } else {
+    console.error("登录失败:", json.message);
+  }
+%}
+
+###
+
+### getCurrentUser: 使用登录获取的 token 查询用户信息
+GET {{baseUrl}}/user/
+Authorization: Bearer {{token}}
+
+###
+
+### doSubmit: 使用登录 token 提交题目
+POST {{baseUrl}}/submit/do
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userId": 0,
+  "questionId": 1,
+  "lang": "java",
+  "code": "// node code here, I love java!"
+}
