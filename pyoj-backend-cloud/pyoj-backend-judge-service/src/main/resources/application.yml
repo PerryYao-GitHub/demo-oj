@@ -12,6 +12,11 @@ spring:
   autoconfigure:
      exclude: # drop database drive
        - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   redis:
     database: 0
     host: localhost
@@ -22,12 +27,5 @@ spring:
   mvc: # for swagger3
     pathmatch:
       matching-strategy: ant_path_matcher
-#springdoc:
-#  api-docs:
-#    enabled: true
-#  swagger-ui:
-#    enabled: true
-#knife4j:
-#  enable: true
 codesandbox:
   type: py # fake or py

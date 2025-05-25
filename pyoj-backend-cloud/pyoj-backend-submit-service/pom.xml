@@ -91,6 +91,13 @@
 <!--            <artifactId>redisson-spring-boot-starter</artifactId>-->
 <!--        </dependency>-->
 
+        <!-- MQ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+            <version>2.7.6</version>
+        </dependency>
+
         <!-- Hutool -->
         <dependency>
             <groupId>cn.hutool</groupId>

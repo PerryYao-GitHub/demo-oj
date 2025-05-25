@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackendcommon.app.AppCode;
 import com.ypy.pyojbackendcommon.app.AppResponse;
 import com.ypy.pyojbackendcommon.exception.AppException;
-import com.ypy.pyojbackendcommon.feignclient.JudgeFeignClient;
 import com.ypy.pyojbackendcommon.feignclient.QuestionFeignClient;
 import com.ypy.pyojbackendcommon.feignclient.UserFeignClient;
 import com.ypy.pyojbackendcommon.model.entity.Question;
@@ -19,12 +18,11 @@ import com.ypy.pyojbackendcommon.model.request.SubmitRequest;
 import com.ypy.pyojbackendcommon.model.vo.PageVO;
 import com.ypy.pyojbackendcommon.model.vo.SubmitVO;
 import com.ypy.pyojbackendsubmitservice.mapper.SubmitMapper;
-import org.springframework.context.annotation.Lazy;
+import com.ypy.pyojbackendsubmitservice.mq.JudgeMessageProducer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,8 +37,7 @@ public class SubmitServiceImpl
     private QuestionFeignClient questionFeignClient;
 
     @Resource
-    @Lazy
-    private JudgeFeignClient judgeService;
+    private JudgeMessageProducer judgeMessageProducer;
 
     private Submit toSubmit(SubmitRequest submitRequest) {
         Submit submit = new Submit();
@@ -85,13 +82,7 @@ public class SubmitServiceImpl
         if (!save(submit)) throw new AppException(AppCode.ERR_SYSTEM);
 
         long submitId = submit.getId(); // once save successfully, the id and some other field will be filled
-        CompletableFuture.runAsync(() -> {
-            try {
-                judgeService.doJudge(submitId);
-            } catch (AppException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        judgeMessageProducer.send(String.valueOf(submitId));
         return new AppResponse<>(AppCode.OK, toSubmitVO(submit, question.getTitle()));
     }
 
