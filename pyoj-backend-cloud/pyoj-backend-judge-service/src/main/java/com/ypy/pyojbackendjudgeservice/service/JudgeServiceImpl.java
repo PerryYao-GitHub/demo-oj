@@ -2,18 +2,18 @@ package com.ypy.pyojbackendjudgeservice.service;
 
 import com.ypy.pyojbackendcommon.app.AppCode;
 import com.ypy.pyojbackendcommon.exception.AppException;
+import com.ypy.pyojbackendcommon.feignclient.QuestionFeignClient;
+import com.ypy.pyojbackendcommon.feignclient.SubmitFeignClient;
+import com.ypy.pyojbackendcommon.model.entity.Question;
+import com.ypy.pyojbackendcommon.model.entity.Submit;
+import com.ypy.pyojbackendcommon.model.enums.SubmitStatusEnum;
+import com.ypy.pyojbackendcommon.model.judge.JudgeResult;
 import com.ypy.pyojbackendjudgeservice.codesandbox.CodeSandbox;
 import com.ypy.pyojbackendjudgeservice.codesandbox.CodeSandboxFactory;
 import com.ypy.pyojbackendjudgeservice.codesandbox.model.CodeSandboxRequest;
 import com.ypy.pyojbackendjudgeservice.codesandbox.model.CodeSandboxResponse;
-import com.ypy.pyojbackendcommon.model.judge.JudgeResult;
 import com.ypy.pyojbackendjudgeservice.strategy.JudgeContext;
 import com.ypy.pyojbackendjudgeservice.strategy.JudgeStrategy;
-import com.ypy.pyojbackendcommon.model.entity.Question;
-import com.ypy.pyojbackendcommon.model.entity.Submit;
-import com.ypy.pyojbackendcommon.model.enums.SubmitStatusEnum;
-import com.ypy.pyojbackendserviceclient.service.QuestionFeignClient;
-import com.ypy.pyojbackendserviceclient.service.SubmitFeignClient;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import java.util.Objects;
 
 @Service
 public class JudgeServiceImpl implements JudgeService {
+
     @Resource
     private QuestionFeignClient questionFeignClient;
 

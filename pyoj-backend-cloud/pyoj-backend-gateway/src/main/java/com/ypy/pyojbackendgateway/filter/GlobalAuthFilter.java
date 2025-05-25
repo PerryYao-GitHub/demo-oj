@@ -1,10 +1,14 @@
 package com.ypy.pyojbackendgateway.filter;
 
+import com.ypy.pyojbackendcommon.exception.AppException;
+import com.ypy.pyojbackendcommon.model.dto.UserAuthDTO;
+import com.ypy.pyojbackendcommon.model.enums.UserRoleEnum;
+import com.ypy.pyojbackendcommon.utils.JwtUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -20,19 +24,40 @@ public class GlobalAuthFilter implements GlobalFilter, Ordered {
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+    private Mono<Void> buildErrorResponse(ServerWebExchange exchange, HttpStatus status, String message) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(status);
+        DataBuffer dataBuffer = response.bufferFactory().wrap(message.getBytes(StandardCharsets.UTF_8));
+        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8");
+        return response.writeWith(Mono.just(dataBuffer));
+    }
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         String path = serverHttpRequest.getURI().getPath();
-        // 判断路径中是否包含 inner，只允许内部调用
+
         if (antPathMatcher.match("/**/inner/**", path)) {
-            ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.FORBIDDEN);
-            DataBufferFactory dataBufferFactory = response.bufferFactory();
-            DataBuffer dataBuffer = dataBufferFactory.wrap("无权限".getBytes(StandardCharsets.UTF_8));
-            return response.writeWith(Mono.just(dataBuffer));
+            return buildErrorResponse(exchange, HttpStatus.FORBIDDEN, "No Auth");
         }
-        // todo 统一权限校验，通过 JWT 获取登录用户信息
+
+        if (antPathMatcher.match("/**/admin/**", path)) {
+            String authHeader = serverHttpRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return buildErrorResponse(exchange, HttpStatus.FORBIDDEN, "No Auth");
+            }
+
+            String token = authHeader.substring(7);
+            try {
+                UserAuthDTO dto = JwtUtils.parseToken(token);
+                if (dto.getRole() != UserRoleEnum.ADMIN.getValue()) {
+                    return buildErrorResponse(exchange, HttpStatus.FORBIDDEN, "No Auth");
+                }
+            } catch (AppException e) {
+                return buildErrorResponse(exchange, HttpStatus.FORBIDDEN, e.getMessage());
+            }
+        }
+
         return chain.filter(exchange);
     }
 

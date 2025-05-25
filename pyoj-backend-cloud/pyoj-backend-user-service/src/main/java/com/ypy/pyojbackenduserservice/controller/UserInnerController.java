@@ -1,7 +1,7 @@
 package com.ypy.pyojbackenduserservice.controller;
 
+import com.ypy.pyojbackendcommon.feignclient.UserFeignClient;
 import com.ypy.pyojbackendcommon.model.entity.User;
-import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackenduserservice.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;

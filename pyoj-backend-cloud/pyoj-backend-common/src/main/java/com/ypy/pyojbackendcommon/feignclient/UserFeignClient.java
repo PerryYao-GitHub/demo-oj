@@ -1,4 +1,4 @@
-package com.ypy.pyojbackendserviceclient.service;
+package com.ypy.pyojbackendcommon.feignclient;
 
 import com.ypy.pyojbackendcommon.app.AppCode;
 import com.ypy.pyojbackendcommon.exception.AppException;

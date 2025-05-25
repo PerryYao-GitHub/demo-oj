@@ -1,4 +1,4 @@
-package com.ypy.pyojbackendserviceclient.service;
+package com.ypy.pyojbackendcommon.feignclient;
 
 import com.ypy.pyojbackendcommon.exception.AppException;
 import org.springframework.cloud.openfeign.FeignClient;

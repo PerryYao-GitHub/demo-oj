@@ -1,7 +1,7 @@
 package com.ypy.pyojbackendsubmitservice.controller;
 
+import com.ypy.pyojbackendcommon.feignclient.SubmitFeignClient;
 import com.ypy.pyojbackendcommon.model.entity.Submit;
-import com.ypy.pyojbackendserviceclient.service.SubmitFeignClient;
 import com.ypy.pyojbackendsubmitservice.service.SubmitService;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;

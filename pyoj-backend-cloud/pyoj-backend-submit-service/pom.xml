@@ -23,16 +23,10 @@
     </properties>
 
     <dependencies>
-        <!-- Common etc -->
+        <!-- Common -->
         <dependency>
             <groupId>com.ypy</groupId>
             <artifactId>pyoj-backend-common</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ypy</groupId>
-            <artifactId>pyoj-backend-service-client</artifactId>
             <version>1.0.0</version>
         </dependency>
 

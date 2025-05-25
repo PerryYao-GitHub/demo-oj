@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ypy.pyojbackendcommon.app.AppCode;
 import com.ypy.pyojbackendcommon.app.AppResponse;
 import com.ypy.pyojbackendcommon.exception.AppException;
+import com.ypy.pyojbackendcommon.feignclient.UserFeignClient;
 import com.ypy.pyojbackendcommon.model.dto.UserAuthDTO;
 import com.ypy.pyojbackendcommon.model.entity.User;
 import com.ypy.pyojbackendcommon.model.enums.TagEnum;
@@ -14,7 +15,6 @@ import com.ypy.pyojbackendcommon.model.request.UserAuthRequest;
 import com.ypy.pyojbackendcommon.model.request.UserUpdateRequest;
 import com.ypy.pyojbackendcommon.model.vo.UserVO;
 import com.ypy.pyojbackendcommon.utils.JwtUtils;
-import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackenduserservice.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -72,11 +72,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) throws AppException {
-        return userFeignClient.getLoginUserAuthDTO(request);
-    }
-
-    @Override
     public AppResponse<Void> register(UserAuthRequest userAuthRequest) throws AppException {
         User user = toUser(userAuthRequest);
         String lockKey = LOCK_PREFIX + user.getUsername();
@@ -124,7 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public AppResponse<UserVO> getLoginUserVO(HttpServletRequest request) throws AppException {
-        return new AppResponse<>(AppCode.OK, toUserVO(getById(getLoginUserAuthDTO(request))));
+        return new AppResponse<>(AppCode.OK, toUserVO(getById(userFeignClient.getLoginUserAuthDTO(request))));
     }
 
     @Override
@@ -136,7 +131,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public AppResponse<Void> resetPassword(UserAuthRequest userAuthRequest, HttpServletRequest request) throws AppException {
         toUser(userAuthRequest);
-        User user = getById(getLoginUserAuthDTO(request));
+        User user = getById(userFeignClient.getLoginUserAuthDTO(request));
         if (!user.getUsername().equals(userAuthRequest.getUsername())) throw new AppException(AppCode.ERR_FORBIDDEN);
 
         QueryWrapper<User> qw = new QueryWrapper<>();
@@ -152,7 +147,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public AppResponse<UserVO> userUpdate(UserUpdateRequest userUpdateRequest, HttpServletRequest request) throws AppException {
-        User user = getById(getLoginUserAuthDTO(request));
+        User user = getById(userFeignClient.getLoginUserAuthDTO(request));
         toUser(userUpdateRequest, user);
         if (!updateById(user)) throw new AppException(AppCode.ERR_SYSTEM);
         return new AppResponse<>(AppCode.OK, null);

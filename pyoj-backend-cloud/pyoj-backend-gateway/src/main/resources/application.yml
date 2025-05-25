@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: pyoj-backend-gateway
+  autoconfigure:
+    exclude: # drop database drive
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   cloud:
     nacos:
       discovery:

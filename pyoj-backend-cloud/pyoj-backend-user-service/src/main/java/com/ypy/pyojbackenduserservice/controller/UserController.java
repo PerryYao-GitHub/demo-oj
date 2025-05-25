@@ -6,7 +6,10 @@ import com.ypy.pyojbackendcommon.model.request.UserAuthRequest;
 import com.ypy.pyojbackendcommon.model.request.UserUpdateRequest;
 import com.ypy.pyojbackendcommon.model.vo.UserVO;
 import com.ypy.pyojbackenduserservice.service.UserService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

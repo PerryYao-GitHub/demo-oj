@@ -1,8 +1,8 @@
 package com.ypy.pyojbackendquestionservice.controller;
 
+import com.ypy.pyojbackendcommon.feignclient.QuestionFeignClient;
 import com.ypy.pyojbackendcommon.model.entity.Question;
 import com.ypy.pyojbackendquestionservice.service.QuestionService;
-import com.ypy.pyojbackendserviceclient.service.QuestionFeignClient;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 

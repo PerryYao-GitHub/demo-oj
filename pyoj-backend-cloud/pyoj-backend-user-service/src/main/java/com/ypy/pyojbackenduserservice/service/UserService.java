@@ -14,14 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService extends IService<User> {
 
     /**
-     * get login user through session or jwt
-     * @param request
-     * @return
-     * @throws AppException
-     */
-    UserAuthDTO getLoginUserAuthDTO(HttpServletRequest request) throws AppException;
-
-    /**
      * length username and password between 4 - 16, contains only a-z, A-Z, 0-9, and !@#$%^&*
      * implement step:
      * 1. is username and password valid?

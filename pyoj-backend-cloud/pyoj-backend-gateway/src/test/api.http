@@ -1,3 +1,5 @@
+# test admin
+
 ### login
 POST localhost:8080/api/user/login
 Content-Type: application/json
@@ -8,13 +10,11 @@ Content-Type: application/json
   "oldPassword": ""
 }
 
-###
 
 ### getCurrentUser
 GET localhost:8080/api/user/
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwicm9sZSI6MCwiaWF0IjoxNzQ4MTA0Njg1LCJleHAiOjE3NDgxOTEwODV9.CoYUOUJVnxlz0sLNuGYOgil2DPkh_2rVpciDLJ2SEHw
 
-###
 
 ### doSubmit
 POST localhost:8080/api/submit/do
@@ -28,4 +28,44 @@ Content-Type: application/json
   "code": "// node code here, I love java!"
 }
 
-###
+
+### adminSyncQuestion
+GET localhost:8080/api/question/admin/sync
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwicm9sZSI6MCwiaWF0IjoxNzQ4MTA0Njg1LCJleHAiOjE3NDgxOTEwODV9.CoYUOUJVnxlz0sLNuGYOgil2DPkh_2rVpciDLJ2SEHw
+
+
+# test user
+
+
+### login
+POST localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "username": "usr-alice",
+  "password": "123456",
+  "oldPassword": ""
+}
+
+
+### getCurrentUser
+GET localhost:8080/api/user/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6Miwicm9sZSI6MSwiaWF0IjoxNzQ4MTY4ODEwLCJleHAiOjE3NDgyNTUyMTB9.VNNAKz7n1L2S5CGyPp67hUCzxZQ1XQ3FULPaCqKJIo0
+
+
+### doSubmit
+POST localhost:8080/api/submit/do
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6Miwicm9sZSI6MSwiaWF0IjoxNzQ4MTY4ODEwLCJleHAiOjE3NDgyNTUyMTB9.VNNAKz7n1L2S5CGyPp67hUCzxZQ1XQ3FULPaCqKJIo0
+Content-Type: application/json
+
+{
+  "userId": 0,
+  "questionId": 2,
+  "lang": "java",
+  "code": "// node code here, I love java!"
+}
+
+
+### adminSyncQuestion
+GET localhost:8080/api/question/admin/sync
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6Miwicm9sZSI6MSwiaWF0IjoxNzQ4MTY4ODEwLCJleHAiOjE3NDgyNTUyMTB9.VNNAKz7n1L2S5CGyPp67hUCzxZQ1XQ3FULPaCqKJIo0

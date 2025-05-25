@@ -15,7 +15,6 @@
     <modules>
         <module>pyoj-backend-common</module>
         <module>pyoj-backend-gateway</module>
-        <module>pyoj-backend-service-client</module>
 
         <module>pyoj-backend-user-service</module>
         <module>pyoj-backend-question-service</module>

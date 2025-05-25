@@ -2,11 +2,11 @@ package com.ypy.pyojbackendsubmitservice.controller;
 
 import com.ypy.pyojbackendcommon.app.AppResponse;
 import com.ypy.pyojbackendcommon.exception.AppException;
+import com.ypy.pyojbackendcommon.feignclient.UserFeignClient;
 import com.ypy.pyojbackendcommon.model.query.SubmitPageQuery;
 import com.ypy.pyojbackendcommon.model.request.SubmitRequest;
 import com.ypy.pyojbackendcommon.model.vo.PageVO;
 import com.ypy.pyojbackendcommon.model.vo.SubmitVO;
-import com.ypy.pyojbackendserviceclient.service.UserFeignClient;
 import com.ypy.pyojbackendsubmitservice.service.SubmitService;
 import org.springframework.web.bind.annotation.*;
 

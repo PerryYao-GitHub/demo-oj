@@ -1,8 +1,8 @@
 package com.ypy.pyojbackendjudgeservice.controller;
 
 import com.ypy.pyojbackendcommon.exception.AppException;
+import com.ypy.pyojbackendcommon.feignclient.JudgeFeignClient;
 import com.ypy.pyojbackendjudgeservice.service.JudgeService;
-import com.ypy.pyojbackendserviceclient.service.JudgeFeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

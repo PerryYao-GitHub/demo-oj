@@ -16,6 +16,13 @@
     <version>1.0.0</version>
 
     <dependencies>
+        <!-- Common -->
+        <dependency>
+            <groupId>com.ypy</groupId>
+            <artifactId>pyoj-backend-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Spring Cloud Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -46,6 +53,18 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
             <version>4.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
     </dependencies>
 

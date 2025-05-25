@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan("com.ypy")
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.ypy.pyojbackendserviceclient.service"})
+@EnableFeignClients(basePackages = {"com.ypy.pyojbackendcommon.feignclient"})
 public class PyojBackendJudgeServiceApplication {
 
     public static void main(String[] args) {
